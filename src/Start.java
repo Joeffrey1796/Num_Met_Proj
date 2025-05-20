@@ -137,13 +137,30 @@ class MethodInputFrame extends JFrame {
     private String methodName;
     private List<JTextField> inputFields = new ArrayList<>();
 
-    public static boolean isDouble(String str) {
+    private boolean isDouble(String str) {
         try {
             Double.parseDouble(str);
             return true;
         } catch (NumberFormatException e) {
             return false;
         }
+    }
+
+    private boolean isValidToleranceFormat(String input) {
+    // Check if the string ends with '1'
+        if (!input.endsWith("1")) {
+            return false;
+        }
+        
+        // Check if all characters are either '0' or '.'
+        for (int i = 0; i < input.length() - 1; i++) { // -1 to exclude the ending '1'
+            char c = input.charAt(i);
+            if (c != '0' && c != '.') {
+                return false;
+            }
+        }
+        
+        return true;
     }
 
     public MethodInputFrame(String methodName) {
@@ -207,12 +224,15 @@ class MethodInputFrame extends JFrame {
 
             //! Data type check
             if (correct) {  // Only proceed with data type check if fields aren't empty
-                if (methodName.equals("Fixed-Point Iteration Method") || methodName.equals("Fixed-Point Iteration Method")) {
+                if (methodName.equals("Fixed-Point Iteration Method") || methodName.equals("Newton-Rhapson Method")) {
                     if (!isDouble(inputs.get(1))) {
                         JOptionPane.showMessageDialog(null, "Error: Invalid number format for guess 1.", "Input Error", JOptionPane.ERROR_MESSAGE);
                         correct = false;
                     } else if (!isDouble(inputs.get(2))) {
                         JOptionPane.showMessageDialog(null, "Error: Invalid number format for tolerance.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                        correct = false;
+                    } else if (!isValidToleranceFormat(inputs.get(2))) {
+                        JOptionPane.showMessageDialog(null, "Error: Tolerance must be in format like 0.1, 0.0001, etc. (ending with 1).", "Input Error", JOptionPane.ERROR_MESSAGE);
                         correct = false;
                     }
                 } else {
@@ -224,6 +244,9 @@ class MethodInputFrame extends JFrame {
                         correct = false;
                     } else if (!isDouble(inputs.get(3))) {
                         JOptionPane.showMessageDialog(null, "Error: Invalid number format for tolerance.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                        correct = false;
+                    } else if (!isValidToleranceFormat(inputs.get(3))) {
+                        JOptionPane.showMessageDialog(null, "Error: Tolerance must be in format like 0.1, 0.0001, etc. (ending with 1).", "Input Error", JOptionPane.ERROR_MESSAGE);
                         correct = false;
                     }
                 }
@@ -271,27 +294,63 @@ class MethodsSolutionFrame extends JFrame {
         getContentPane().setBackground(new Color(25, 25, 25));
         setLayout(new BorderLayout());
 
+        // Create main panel with BorderLayout
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(new Color(25, 25, 25));
 
-        JLabel label = new JLabel(methodName, SwingConstants.CENTER);
-        label.setFont(new Font(Start.FONT_NAME, Font.BOLD, 22));
-        label.setForeground(Color.GREEN);
-        add(label, BorderLayout.CENTER);
-        // setVisible(true);
+        // Create and configure the label (at NORTH position)
+        // JLabel label = new JLabel(methodName, SwingConstants.CENTER);
+        // label.setFont(new Font(Start.FONT_NAME, Font.BOLD, 22));
+        // label.setForeground(Color.GREEN);
+        // label.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        // mainPanel.add(label, BorderLayout.NORTH);
 
+        // Create text area
         JTextArea solutionTextArea = new JTextArea();
         solutionTextArea.setEditable(false);
-        solutionTextArea.setFont(new Font(Start.FONT_NAME, Font.PLAIN, 14));
+        solutionTextArea.setFont(new Font(Start.FONT_NAME, Font.PLAIN, 18));
         solutionTextArea.setForeground(Color.WHITE);
-        solutionTextArea.setBackground(new Color(40, 40, 40));
-        solutionTextArea.setLineWrap(true);
-        solutionTextArea.setWrapStyleWord(true);
+        solutionTextArea.setBackground(new Color(25,25,25));
+        solutionTextArea.setLineWrap(false);
+        solutionTextArea.setWrapStyleWord(false);
+
 
         JScrollPane scrollPane = new JScrollPane(solutionTextArea);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(32); // or any higher value like 32
+        scrollPane.getHorizontalScrollBar().setUnitIncrement(32);
+        scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
+        scrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 0));
 
+        // Custom mouse wheel handling
+        solutionTextArea.addMouseWheelListener(e -> {
+            JScrollBar vertical = scrollPane.getVerticalScrollBar();
+            JScrollBar horizontal = scrollPane.getHorizontalScrollBar();
+            
+            if (e.isControlDown()) {
+                // Zoom with Ctrl+Wheel
+                Font currentFont = solutionTextArea.getFont();
+                int newSize = currentFont.getSize() + (e.getWheelRotation() < 0 ? 1 : -1);
+                if (newSize > 8 && newSize < 72) {
+                    solutionTextArea.setFont(new Font(currentFont.getName(), currentFont.getStyle(), newSize));
+                }
+                e.consume();
+            } else if (e.isShiftDown()) {
+                // Horizontal scroll with Shift+Wheel
+                int newValue = horizontal.getValue() + (e.getWheelRotation() * horizontal.getUnitIncrement());
+                horizontal.setValue(Math.max(horizontal.getMinimum(), Math.min(horizontal.getMaximum(), newValue)));
+                e.consume();
+            } else {
+                // Normal vertical scrolling
+                int newValue = vertical.getValue() + (e.getWheelRotation() * vertical.getUnitIncrement());
+                vertical.setValue(Math.max(vertical.getMinimum(), Math.min(vertical.getMaximum(), newValue)));
+                e.consume();
+            }
+        });
+
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
         add(mainPanel, BorderLayout.CENTER);
         setVisible(true);
         
@@ -315,16 +374,35 @@ class MethodsSolutionFrame extends JFrame {
         
         switch (methodName) {
             case "Fixed-Point Iteration Method":
+                Fixed_Point fpSolver = new Fixed_Point();
+                fpSolver.solve(inputs.get(0), Double.parseDouble(inputs.get(1)), Double.parseDouble(inputs.get(2)));
+                //? debug
+                // boolean smSuccess = smSolver.solve(@param);
+                // smSolver.printSolution(smSuccess);
+                soln = fpSolver.getSolutionSteps();
+                ans = fpSolver.getAnswers();
+                soln.addAll(ans);
                 
+                // Join the solution steps with newlines and display in the text area
+                solutionText = String.join("\n", soln);
+                solutionTextArea.setText(solutionText);
                 break;
             case "Newton-Rhapson Method":
-
-            break;
+                Newton_Raphson nr_solver = new Newton_Raphson();
+                nr_solver.solve(inputs.get(0), Double.parseDouble(inputs.get(1)), Double.parseDouble(inputs.get(2)));
+                soln = nr_solver.getSolutionSteps();
+                ans = nr_solver.getAnswers();
+                soln.addAll(ans);
+                
+                // Join the solution steps with newlines and display in the text area
+                solutionText = String.join("\n", soln);
+                solutionTextArea.setText(solutionText);
+                break;
             
             
             case "Secant Method":
                 Secant_Method smSolver = new Secant_Method();
-                smSolver.solve(inputs.get(0), Double.parseDouble(inputs.get(1)), Double.parseDouble(inputs.get(2)));
+                smSolver.solve(inputs.get(0), Double.parseDouble(inputs.get(1)), Double.parseDouble(inputs.get(2)),Double.parseDouble(inputs.get(3)));
                 //? debug
                 // boolean smSuccess = smSolver.solve(@param);
                 // smSolver.printSolution(smSuccess);
@@ -338,7 +416,7 @@ class MethodsSolutionFrame extends JFrame {
                 break;
             case "Bisection Method":
                 Bisection bm_solver = new Bisection();
-                bm_solver.solve(inputs.get(0), Double.parseDouble(inputs.get(1)), Double.parseDouble(inputs.get(2)));
+                bm_solver.solve(inputs.get(0), Double.parseDouble(inputs.get(1)), Double.parseDouble(inputs.get(2)),Double.parseDouble(inputs.get(3)));
                 soln = bm_solver.getSolutionSteps();
                 ans = bm_solver.getAnswers();
                 soln.addAll(ans);
@@ -349,7 +427,7 @@ class MethodsSolutionFrame extends JFrame {
                 break;
             case "False Position or Regular Falsi Method":
                 False_Position fp_solver = new False_Position();
-                fp_solver.solve(inputs.get(0), Double.parseDouble(inputs.get(1)), Double.parseDouble(inputs.get(2)));
+                fp_solver.solve(inputs.get(0), Double.parseDouble(inputs.get(1)), Double.parseDouble(inputs.get(2)),Double.parseDouble(inputs.get(3)));
                 soln = fp_solver.getSolutionSteps();
                 ans = fp_solver.getAnswers();
                 soln.addAll(ans);
@@ -372,14 +450,6 @@ class MethodsSolutionFrame extends JFrame {
 
 // TODO: Grab values from input fields;
 class MatrixSolutionFrame extends JFrame {
-    // public SolutionFrame() {
-    //     setTitle("Solution");
-    //     setSize(400, 250);
-    //     setLocationRelativeTo(null);
-    //     getContentPane().setBackground(new Color(25, 25, 25));
-    //     setLayout(new BorderLayout());
-    //     setVisible(true);
-    // }
 
     public MatrixSolutionFrame(String methodName, double[][] matrix, double[] constants) {
         setTitle(methodName + " Solution");
@@ -388,27 +458,63 @@ class MatrixSolutionFrame extends JFrame {
         getContentPane().setBackground(new Color(25, 25, 25));
         setLayout(new BorderLayout());
 
+        // Create main panel with BorderLayout
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(new Color(25, 25, 25));
 
-        JLabel label = new JLabel(methodName, SwingConstants.CENTER);
-        label.setFont(new Font(Start.FONT_NAME, Font.BOLD, 22));
-        label.setForeground(Color.GREEN);
-        add(label, BorderLayout.CENTER);
-        // setVisible(true);
+        // Create and configure the label (at NORTH position)
+        // JLabel label = new JLabel(methodName, SwingConstants.CENTER);
+        // label.setFont(new Font(Start.FONT_NAME, Font.BOLD, 22));
+        // label.setForeground(Color.GREEN);
+        // label.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        // mainPanel.add(label, BorderLayout.NORTH);
 
+        // Create text area
         JTextArea solutionTextArea = new JTextArea();
         solutionTextArea.setEditable(false);
-        solutionTextArea.setFont(new Font(Start.FONT_NAME, Font.PLAIN, 14));
+        solutionTextArea.setFont(new Font(Start.FONT_NAME, Font.PLAIN, 18));
         solutionTextArea.setForeground(Color.WHITE);
-        solutionTextArea.setBackground(new Color(40, 40, 40));
-        solutionTextArea.setLineWrap(true);
-        solutionTextArea.setWrapStyleWord(true);
+        solutionTextArea.setBackground(new Color(25,25,25));
+        solutionTextArea.setLineWrap(false);
+        solutionTextArea.setWrapStyleWord(false);
+
 
         JScrollPane scrollPane = new JScrollPane(solutionTextArea);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(32); // or any higher value like 32
+        scrollPane.getHorizontalScrollBar().setUnitIncrement(32);
+        scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
+        scrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 0));
 
+        // Custom mouse wheel handling
+        solutionTextArea.addMouseWheelListener(e -> {
+            JScrollBar vertical = scrollPane.getVerticalScrollBar();
+            JScrollBar horizontal = scrollPane.getHorizontalScrollBar();
+            
+            if (e.isControlDown()) {
+                // Zoom with Ctrl+Wheel
+                Font currentFont = solutionTextArea.getFont();
+                int newSize = currentFont.getSize() + (e.getWheelRotation() < 0 ? 1 : -1);
+                if (newSize > 8 && newSize < 72) {
+                    solutionTextArea.setFont(new Font(currentFont.getName(), currentFont.getStyle(), newSize));
+                }
+                e.consume();
+            } else if (e.isShiftDown()) {
+                // Horizontal scroll with Shift+Wheel
+                int newValue = horizontal.getValue() + (e.getWheelRotation() * horizontal.getUnitIncrement());
+                horizontal.setValue(Math.max(horizontal.getMinimum(), Math.min(horizontal.getMaximum(), newValue)));
+                e.consume();
+            } else {
+                // Normal vertical scrolling
+                int newValue = vertical.getValue() + (e.getWheelRotation() * vertical.getUnitIncrement());
+                vertical.setValue(Math.max(vertical.getMinimum(), Math.min(vertical.getMaximum(), newValue)));
+                e.consume();
+            }
+        });
+
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
         add(mainPanel, BorderLayout.CENTER);
         setVisible(true);
 

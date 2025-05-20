@@ -7,7 +7,7 @@ import java.util.List;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
-public class Fixed_Point {
+public class Newton_Raphson {
     private List<String> msgSoln;
     private List<String> answers;
     private List<Double> iterationValues;
@@ -16,16 +16,17 @@ public class Fixed_Point {
     private DecimalFormat decimalFormat;
     private DecimalFormat fixedFormat;
     private int maxIterations;
+    private double derivativeStepSize;
 
-    public Fixed_Point() {
-        this(0.0001, 1000);
+    public Newton_Raphson() {
+        this(0.0001, 1000, 1e-5);
     }
 
-    public Fixed_Point(double tolerance) {
-        this(tolerance, 1000);
+    public Newton_Raphson(double tolerance) {
+        this(tolerance, 1000, 1e-5);
     }
 
-    public Fixed_Point(double tolerance, int maxIterations) {
+    public Newton_Raphson(double tolerance, int maxIterations, double derivativeStepSize) {
         this.msgSoln = new ArrayList<>();
         this.answers = new ArrayList<>();
         this.iterationValues = new ArrayList<>();
@@ -35,6 +36,7 @@ public class Fixed_Point {
         fixedFormat.setDecimalFormatSymbols(symbols);
         setTolerance(tolerance);
         this.maxIterations = maxIterations;
+        this.derivativeStepSize = derivativeStepSize;
     }
 
     public List<String> getSolutionSteps() {
@@ -104,11 +106,10 @@ public class Fixed_Point {
     }
 
     private double derivative(double x) throws IllegalArgumentException {
-        double h = 1e-10;
         try {
-            double fxh = f(x + h);
-            double fx = f(x);
-            return (fxh - fx) / h;
+            double fxh = f(x + derivativeStepSize);
+            double fx = f(x - derivativeStepSize);
+            return (fxh - fx) / (2 * derivativeStepSize);
         } catch (Exception e) {
             throw new IllegalArgumentException("Error calculating derivative: " + e.getMessage());
         }
@@ -127,20 +128,13 @@ public class Fixed_Point {
 
         msgSoln.add("Using tolerance: " + formatNumber(tolerance));
         msgSoln.add("Maximum iterations: " + maxIterations);
+        msgSoln.add("Derivative step size: " + derivativeStepSize);
         
         try {
-            double derivativeValue = derivative(initialGuess);
-            msgSoln.add(String.format("Derivative at initial guess: g'(%s) = %s", 
-                formatNumber(initialGuess), formatNumber(derivativeValue)));
-            
-            if (Math.abs(derivativeValue) >= 1) {
-                msgSoln.add("Warning: |g'(x)| ≥ 1 at initial guess. Convergence not guaranteed.");
-            }
-
-            msgSoln.add("Starting fixed-point iteration with initial guess: " + formatNumber(initialGuess));
+            msgSoln.add("Starting Newton-Raphson method with initial guess: " + formatNumber(initialGuess));
             msgSoln.add("");
 
-            double root = fixedPointRecursive(initialGuess, 1);
+            double root = newtonRaphsonRecursive(initialGuess, 1);
 
             answers.add("Root found: " + formatNumber(root));
             answers.add("Number of iterations: " + iterationValues.size());
@@ -153,30 +147,39 @@ public class Fixed_Point {
         }
     }
     
-    private double fixedPointRecursive(double x, int iteration) {
+    private double newtonRaphsonRecursive(double x, int iteration) {
         if (iteration > maxIterations) {
             msgSoln.add("Maximum iterations reached without convergence.");
             return x;
         }
 
-        double gx = f(x);
-        double error = Math.abs(gx - x);
+        double fx = f(x);
+        double dfx = derivative(x);
         iterationValues.add(x);
 
         msgSoln.add(String.format("Iteration %d:", iteration));
         msgSoln.add(String.format("  x%d = %s", iteration, formatNumber(x)));
-        msgSoln.add(String.format("  g(x%d) = %s = %s", 
-            iteration, getFunctionEvaluationString(x), formatNumber(gx)));
-        msgSoln.add(String.format("  Error = |g(x) - x| = |%s - %s| = %s", 
-            formatNumber(gx), formatNumber(x), formatNumber(error)));
-        msgSoln.add("");
+        msgSoln.add(String.format("  f(x%d) = %s = %s", 
+            iteration, getFunctionEvaluationString(x), formatNumber(fx)));
+        msgSoln.add(String.format("  f'(x%d) = [f(x+h)-f(x-h)]/(2h) = %s", 
+            iteration, formatNumber(dfx)));
 
-        if (error < tolerance) {
-            msgSoln.add("Convergence achieved!");
-            return gx;
+        if (Math.abs(dfx) < 1e-10) {
+            msgSoln.add("Error: Derivative too small (near zero), division by zero risk.");
+            return x;
         }
 
-        return fixedPointRecursive(gx, iteration + 1);
+        double xNew = x - fx / dfx;
+        msgSoln.add(String.format("  x%d = x - f(x)/f'(x) = %s - (%s)/(%s) = %s", 
+            iteration+1, formatNumber(x), formatNumber(fx), formatNumber(dfx), formatNumber(xNew)));
+        msgSoln.add("");
+
+        if (Math.abs(xNew - x) < tolerance) {
+            msgSoln.add("Convergence achieved!");
+            return xNew;
+        }
+
+        return newtonRaphsonRecursive(xNew, iteration + 1);
     }
     
     public void printSolution(boolean success) {
@@ -206,8 +209,8 @@ public class Fixed_Point {
         // Example usages:
         
         // 1. Using default tolerance (0.0001)
-        Fixed_Point solver1 = new Fixed_Point();
-        boolean success1 = solver1.solve("(x+1)^(1/2)", 1.0);
+        Newton_Raphson solver1 = new Newton_Raphson();
+        boolean success1 = solver1.solve("x^3 - x - 1", 1.5);
 
         System.out.println();
         solver1.printSolution(success1);
@@ -215,15 +218,15 @@ public class Fixed_Point {
         System.out.println("\n--------------------------------\n");
         
         // 2. Specifying custom tolerance (0.001)
-        Fixed_Point solver2 = new Fixed_Point(0.001);
-        boolean success2 = solver2.solve("(x+1)^(1/2)", 1.0);
+        Newton_Raphson solver2 = new Newton_Raphson(0.001);
+        boolean success2 = solver2.solve("x^3 - x - 1", 1.5);
         solver2.printSolution(success2);
 
         System.out.println("\n--------------------------------\n");
         
         // 3. Specifying tolerance at solve time (0.00001)
-        Fixed_Point solver3 = new Fixed_Point();
-        boolean success3 = solver3.solve("cos(2*x)", 0.5, 0.00001);
+        Newton_Raphson solver3 = new Newton_Raphson();
+        boolean success3 = solver3.solve("cos(x) - x", 0.5, 0.00001);
         solver3.printSolution(success3);
     }
 }
