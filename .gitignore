@@ -1,0 +1,5 @@
+#ignore .vsc
+.vscode/
+
+# ignore .class files
+*.class
