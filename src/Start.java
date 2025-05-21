@@ -428,8 +428,8 @@ class MethodsSolutionFrame extends JFrame {
             case "False Position or Regular Falsi Method":
                 False_Position fp_solver = new False_Position();
                 fp_solver.solve(inputs.get(0), Double.parseDouble(inputs.get(1)), Double.parseDouble(inputs.get(2)),Double.parseDouble(inputs.get(3)));
-                soln = fp_solver.getSolutionSteps();
-                ans = fp_solver.getAnswers();
+                soln =  new ArrayList<>(fp_solver.getSolutionSteps());
+                ans = new ArrayList<>(fp_solver.getAnswers());
                 soln.addAll(ans);
                 
                 // Join the solution steps with newlines and display in the text area
@@ -536,22 +536,47 @@ class MatrixSolutionFrame extends JFrame {
 
         switch (methodName) {
             case "Cramer's Rule":
-                break;
-            case "Gaussian Elimination":
-                System.out.println("Test");
-                Gaussian_Elimination geSolver = new Gaussian_Elimination();
-
-                geSolver.solve(matrix, constants);
-                soln = geSolver.getSolutionSteps();
-                ans = geSolver.getAnswers();
+                Cramers_Rule crSolver = new Cramers_Rule();
+                crSolver.solve(matrix, constants);
+                soln = crSolver.getSolutionSteps();
+                ans = crSolver.getAnswers();
                 soln.addAll(ans);
 
                 solutionText = String.join("\n", soln);
                 solutionTextArea.setText(solutionText);
                 break;
+            case "Gaussian Elimination":
+                Gaussian_Elimination geSolver = new Gaussian_Elimination();
+
+                geSolver.solve(matrix, constants);
+                soln = geSolver.getSolutionSteps();
+                ans = geSolver.getAnswers();
+                // soln.addAll(ans);
+
+                solutionText = String.join("\n", soln);
+                solutionTextArea.setText(solutionText);
+                break;
             case "Jacobi Method":
+                Jacobi jSolver = new Jacobi();
+
+                jSolver.solve(matrix, constants);
+                soln = jSolver.getSolutionSteps();
+                ans = jSolver.getAnswers();
+                soln.addAll(ans);
+
+                solutionText = String.join("\n", soln);
+                solutionTextArea.setText(solutionText);
                 break;
             case "Gauss-Seidel Method":
+                Gauss_Seidel gsSolver = new Gauss_Seidel();
+
+                gsSolver.solve(matrix, constants);
+                soln = gsSolver.getSolutionSteps();
+                ans = gsSolver.getAnswers();
+                soln.addAll(ans);
+
+                solutionText = String.join("\n", soln);
+                solutionTextArea.setText(solutionText);
                 break;
         
             default:
@@ -708,7 +733,7 @@ class MatrixInputFrame extends JFrame {
                 styleConstantField(tf, row); // Move your focus styling code into a method for clarity
                 constantFields[row] = tf;
                 constantsPanel.add(tf, gbc);
-}
+            }
             matrixPanel.revalidate(); matrixPanel.repaint();
             constantsPanel.revalidate(); constantsPanel.repaint();
         });

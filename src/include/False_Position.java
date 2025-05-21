@@ -2,15 +2,15 @@ package include;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
 public class False_Position {
-    private List<String> msgSoln;
-    private List<String> answers;
-    private List<Double> iterationValues;
+    private Queue<String> msgSoln;  // Changed to Queue
+    private Queue<String> answers;  // Changed to Queue
+    private LinkedList<Double> iterationValues;
     private String functionExpression;
     private double tolerance;
     private DecimalFormat decimalFormat;
@@ -26,9 +26,9 @@ public class False_Position {
     }
 
     public False_Position(double tolerance, int maxIterations) {
-        this.msgSoln = new ArrayList<>();
-        this.answers = new ArrayList<>();
-        this.iterationValues = new ArrayList<>();
+        this.msgSoln = new LinkedList<>();  // Changed to LinkedList implementing Queue
+        this.answers = new LinkedList<>();   // Changed to LinkedList implementing Queue
+        this.iterationValues = new LinkedList<>();
         this.fixedFormat = new DecimalFormat("0.000");
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         symbols.setDecimalSeparator('.');
@@ -37,15 +37,15 @@ public class False_Position {
         this.maxIterations = maxIterations;
     }
 
-    public List<String> getSolutionSteps() {
+    public Queue<String> getSolutionSteps() {  // Changed return type to Queue
         return msgSoln;
     }
 
-    public List<String> getAnswers() {
+    public Queue<String> getAnswers() {        // Changed return type to Queue
         return answers;
     }
 
-    public List<Double> getIterationValues() {
+    public LinkedList<Double> getIterationValues() {
         return iterationValues;
     }
 
@@ -152,7 +152,6 @@ public class False_Position {
             return (a + b) / 2;
         }
 
-        // Calculate c using false position formula
         double c = a - (fa * (b - a)) / (fb - fa);
         double fc = f(c);
         iterationValues.add(c);
@@ -169,17 +168,14 @@ public class False_Position {
             getFunctionEvaluationString(c), formatNumber(fc)));
         msgSoln.add("");
 
-        // Check for convergence
         if (Math.abs(fc) < tolerance || Math.abs(b - a) < tolerance) {
             return c;
         }
 
-        // Check for stagnation
         if (c == a || c == b) {
             return c;
         }
 
-        // Recursive step
         if (fa * fc < 0) {
             return falsePositionRecursive(a, c, fa, fc, iteration + 1);
         } else {
@@ -194,12 +190,12 @@ public class False_Position {
 
         if (success) {
             System.out.println("Solution Steps:");
-            for (String step : msgSoln) {
+            for (String step : msgSoln) {  // Queue can be iterated like this
                 System.out.println(step);
             }
             
             System.out.println("\nFinal Answers:");
-            for (String answer : answers) {
+            for (String answer : answers) {  // Queue can be iterated like this
                 System.out.println(answer);
             }
         } else {

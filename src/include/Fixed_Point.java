@@ -2,15 +2,15 @@ package include;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Stack;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
 public class Fixed_Point {
-    private List<String> msgSoln;
-    private List<String> answers;
-    private List<Double> iterationValues;
+    private LinkedList<String> msgSoln;  // Changed to LinkedList
+    private LinkedList<String> answers;  // Changed to LinkedList
+    private Stack<Double> iterationValues;
     private String functionExpression;
     private double tolerance;
     private DecimalFormat decimalFormat;
@@ -26,9 +26,9 @@ public class Fixed_Point {
     }
 
     public Fixed_Point(double tolerance, int maxIterations) {
-        this.msgSoln = new ArrayList<>();
-        this.answers = new ArrayList<>();
-        this.iterationValues = new ArrayList<>();
+        this.msgSoln = new LinkedList<>();  // Initialize as LinkedList
+        this.answers = new LinkedList<>();   // Initialize as LinkedList
+        this.iterationValues = new Stack<>();
         this.fixedFormat = new DecimalFormat("0.000");
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         symbols.setDecimalSeparator('.');
@@ -37,15 +37,15 @@ public class Fixed_Point {
         this.maxIterations = maxIterations;
     }
 
-    public List<String> getSolutionSteps() {
+    public LinkedList<String> getSolutionSteps() {  // Changed return type to LinkedList
         return msgSoln;
     }
 
-    public List<String> getAnswers() {
+    public LinkedList<String> getAnswers() {       // Changed return type to LinkedList
         return answers;
     }
 
-    public List<Double> getIterationValues() {
+    public Stack<Double> getIterationValues() {
         return iterationValues;
     }
 
@@ -125,7 +125,7 @@ public class Fixed_Point {
         this.functionExpression = function;
         setTolerance(tolerance);
 
-        msgSoln.add("Using tolerance: " + formatNumber(tolerance));
+        msgSoln.add("Using tolerance: " + formatNumber(tolerance));  // add() works with LinkedList
         msgSoln.add("Maximum iterations: " + maxIterations);
         
         try {
@@ -161,7 +161,7 @@ public class Fixed_Point {
 
         double gx = f(x);
         double error = Math.abs(gx - x);
-        iterationValues.add(x);
+        iterationValues.push(x);
 
         msgSoln.add(String.format("Iteration %d:", iteration));
         msgSoln.add(String.format("  x%d = %s", iteration, formatNumber(x)));
@@ -186,12 +186,12 @@ public class Fixed_Point {
 
         if (success) {
             System.out.println("Solution Steps:");
-            for (String step : msgSoln) {
+            for (String step : msgSoln) {  // LinkedList can be iterated directly
                 System.out.println(step);
             }
             
             System.out.println("\nFinal Answers:");
-            for (String answer : answers) {
+            for (String answer : answers) {  // LinkedList can be iterated directly
                 System.out.println(answer);
             }
         } else {

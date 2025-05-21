@@ -2,14 +2,13 @@ package include;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
 public class Bisection {
-    private List<String> msgSoln;
-    private List<String> answers;
+    private Stack<String> msgSoln;  // Changed to Stack
+    private Stack<String> answers;  // Changed to Stack
     private List<Double> iterationValues;
     private String functionExpression;
     private double tolerance;
@@ -26,8 +25,8 @@ public class Bisection {
     }
 
     public Bisection(double tolerance, int maxIterations) {
-        this.msgSoln = new ArrayList<>();
-        this.answers = new ArrayList<>();
+        this.msgSoln = new Stack<>();  // Changed to Stack
+        this.answers = new Stack<>();  // Changed to Stack
         this.iterationValues = new ArrayList<>();
         this.fixedFormat = new DecimalFormat("0.000");
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
@@ -37,11 +36,11 @@ public class Bisection {
         this.maxIterations = maxIterations;
     }
 
-    public List<String> getSolutionSteps() {
+    public Stack<String> getSolutionSteps() {  // Changed return type to Stack
         return msgSoln;
     }
 
-    public List<String> getAnswers() {
+    public Stack<String> getAnswers() {       // Changed return type to Stack
         return answers;
     }
 
@@ -114,41 +113,41 @@ public class Bisection {
         this.functionExpression = function;
         setTolerance(tolerance);
 
-        msgSoln.add("Using tolerance: " + formatNumber(tolerance));
-        msgSoln.add("Maximum iterations: " + maxIterations);
+        msgSoln.push("Using tolerance: " + formatNumber(tolerance));  // Changed to push()
+        msgSoln.push("Maximum iterations: " + maxIterations);         // Changed to push()
         
         try {
             double fa = f(a);
             double fb = f(b);
             
-            msgSoln.add("Initial values:");
-            msgSoln.add(String.format("a = %s, f(a) = %s = %s", 
+            msgSoln.push("Initial values:");
+            msgSoln.push(String.format("a = %s, f(a) = %s = %s", 
                 formatNumber(a), getFunctionEvaluationString(a), formatNumber(fa)));
-            msgSoln.add(String.format("b = %s, f(b) = %s = %s", 
+            msgSoln.push(String.format("b = %s, f(b) = %s = %s", 
                 formatNumber(b), getFunctionEvaluationString(b), formatNumber(fb)));
-            msgSoln.add("");
+            msgSoln.push("");
 
             if (fa * fb >= 0) {
-                msgSoln.add("Bisection method cannot continue. f(a) and f(b) must have opposite signs.");
+                msgSoln.push("Bisection method cannot continue. f(a) and f(b) must have opposite signs.");
                 return false;
             }
 
             double root = bisectionRecursive(a, b, fa, fb, 1);
 
-            answers.add("Root found: " + formatNumber(root));
-            answers.add("Number of iterations: " + iterationValues.size());
-            answers.add("Final tolerance: " + formatNumber(tolerance));
+            answers.push("Root found: " + formatNumber(root));       // Changed to push()
+            answers.push("Number of iterations: " + iterationValues.size());
+            answers.push("Final tolerance: " + formatNumber(tolerance));
             
             return true;
         } catch (IllegalArgumentException e) {
-            msgSoln.add("Error with function evaluation: " + e.getMessage());
+            msgSoln.push("Error with function evaluation: " + e.getMessage());
             return false;
         }
     }
     
     private double bisectionRecursive(double a, double b, double fa, double fb, int iteration) {
         if (iteration > maxIterations) {
-            msgSoln.add("Maximum iterations reached without convergence.");
+            msgSoln.push("Maximum iterations reached without convergence.");
             return (a + b) / 2;
         }
 
@@ -156,16 +155,16 @@ public class Bisection {
         double fc = f(c);
         iterationValues.add(c);
 
-        msgSoln.add(String.format("Iteration %d:", iteration));
-        msgSoln.add(String.format("  a = %s, f(a) = %s = %s", 
+        msgSoln.push(String.format("Iteration %d:", iteration));
+        msgSoln.push(String.format("  a = %s, f(a) = %s = %s", 
             formatNumber(a), getFunctionEvaluationString(a), formatNumber(fa)));
-        msgSoln.add(String.format("  b = %s, f(b) = %s = %s", 
+        msgSoln.push(String.format("  b = %s, f(b) = %s = %s", 
             formatNumber(b), getFunctionEvaluationString(b), formatNumber(fb)));
-        msgSoln.add(String.format("  c = (a + b)/2 = (%s + %s)/2 = %s", 
+        msgSoln.push(String.format("  c = (a + b)/2 = (%s + %s)/2 = %s", 
             formatNumber(a), formatNumber(b), formatNumber(c)));
-        msgSoln.add(String.format("  f(c) = %s = %s", 
+        msgSoln.push(String.format("  f(c) = %s = %s", 
             getFunctionEvaluationString(c), formatNumber(fc)));
-        msgSoln.add("");
+        msgSoln.push("");
 
         if (Math.abs(fc) < tolerance || (b - a) / 2 < tolerance) {
             return c;
@@ -185,17 +184,25 @@ public class Bisection {
 
         if (success) {
             System.out.println("Solution Steps:");
-            for (String step : msgSoln) {
+            // Need to reverse the stack to print in correct order
+            List<String> reversedSteps = new ArrayList<>(msgSoln);
+            Collections.reverse(reversedSteps);
+            for (String step : reversedSteps) {
                 System.out.println(step);
             }
             
             System.out.println("\nFinal Answers:");
-            for (String answer : answers) {
+            // Need to reverse the answers stack to print in correct order
+            List<String> reversedAnswers = new ArrayList<>(answers);
+            Collections.reverse(reversedAnswers);
+            for (String answer : reversedAnswers) {
                 System.out.println(answer);
             }
         } else {
             System.out.println("Solution failed:");
-            for (String error : msgSoln) {
+            List<String> reversedErrors = new ArrayList<>(msgSoln);
+            Collections.reverse(reversedErrors);
+            for (String error : reversedErrors) {
                 System.out.println(error);
             }
         }
@@ -203,22 +210,6 @@ public class Bisection {
 
     public static void main(String[] args) {
         // Example usages:
-        
-        // // 1. Using default tolerance (0.0001)
-        // Bisection solver1 = new Bisection();
-        // boolean success1 = solver1.solve("x^3 - x - 2", 1.0, 2.0);
-
-        // System.out.println();
-        // solver1.printSolution(success1);
-
-        // System.out.println("\n--------------------------------\n");
-        
-        // // 2. Specifying custom tolerance (0.001)
-        // Bisection solver2 = new Bisection();
-        // boolean success2 = solver2.solve("x^3 - x - 2", 1.0, 2.0);
-        // solver2.printSolution(success2);
-
-        // System.out.println("\n--------------------------------\n");
         
         // 3. Specifying tolerance at solve time (0.00001)
         Bisection solver3 = new Bisection();
