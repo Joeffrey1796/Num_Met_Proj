@@ -623,7 +623,7 @@ class MatrixInputFrame extends JFrame {
         tf.setForeground(new Color(144, 238, 144));
         tf.setBackground(new Color(40, 40, 40));
         tf.setCaretColor(Color.WHITE);
-        tf.setFont(new Font(Start.FONT_NAME, Font.PLAIN, 16));
+        tf.setFont(new Font(Start.FONT_NAME, Font.PLAIN, 24));
         tf.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusGained(java.awt.event.FocusEvent e) {
@@ -647,7 +647,7 @@ class MatrixInputFrame extends JFrame {
         tf.setForeground(new Color(144, 238, 144));
         tf.setBackground(new Color(40, 40, 40));
         tf.setCaretColor(Color.WHITE);
-        tf.setFont(new Font(Start.FONT_NAME, Font.PLAIN, 16));
+        tf.setFont(new Font(Start.FONT_NAME, Font.PLAIN,24));
         tf.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusGained(java.awt.event.FocusEvent e) {
