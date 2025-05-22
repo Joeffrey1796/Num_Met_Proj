@@ -26,11 +26,11 @@ public class Gauss_Seidel {
         this.tolerance = tolerance;
     }
 
-    public List<String> getSolutionSteps() {  // Changed return type to Stack
+    public List<String> getSolutionSteps() {
         return solutionSteps;
     }
 
-    public List<String> getAnswers() {       // Changed return type to Stack
+    public List<String> getAnswers() {
         return answers;
     }
 
@@ -93,8 +93,10 @@ public class Gauss_Seidel {
     public boolean makeDiagonallyDominant() {
         boolean[] visited = new boolean[coefficients.length];
         int[] rowOrder = new int[coefficients.length];
+        
         Arrays.fill(visited, false);
         boolean result = transformToDominant(0, visited, rowOrder);
+
         if (result) {
             solutionSteps.add("\nSystem was rearranged to be diagonally dominant");
         } else {

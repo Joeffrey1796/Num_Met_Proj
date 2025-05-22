@@ -147,13 +147,13 @@ class MethodInputFrame extends JFrame {
     }
 
     private boolean isValidToleranceFormat(String input) {
-    // Check if the string ends with '1'
+    //? Check if the string ends with '1'
         if (!input.endsWith("1")) {
             return false;
         }
         
-        // Check if all characters are either '0' or '.'
-        for (int i = 0; i < input.length() - 1; i++) { // -1 to exclude the ending '1'
+        //? Check if all characters are either '0' or '.'
+        for (int i = 0; i < input.length() - 1; i++) { 
             char c = input.charAt(i);
             if (c != '0' && c != '.') {
                 return false;
@@ -218,12 +218,12 @@ class MethodInputFrame extends JFrame {
                 if (string.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Error: Empty fields are not allowed.", "Input Error", JOptionPane.ERROR_MESSAGE);
                     correct = false;
-                    break;  // No need to check further if one field is empty
+                    break;
                 }
             }
 
             //! Data type check
-            if (correct) {  // Only proceed with data type check if fields aren't empty
+            if (correct) {
                 if (methodName.equals("Fixed-Point Iteration Method") || methodName.equals("Newton-Rhapson Method")) {
                     if (!isDouble(inputs.get(1))) {
                         JOptionPane.showMessageDialog(null, "Error: Invalid number format for guess 1.", "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -284,7 +284,6 @@ class MethodInputFrame extends JFrame {
     }
 }
 
-//TODO: Implement backend api
 class MethodsSolutionFrame extends JFrame {
 
     public MethodsSolutionFrame(String methodName, List<String> inputs) {
@@ -294,18 +293,9 @@ class MethodsSolutionFrame extends JFrame {
         getContentPane().setBackground(new Color(25, 25, 25));
         setLayout(new BorderLayout());
 
-        // Create main panel with BorderLayout
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(new Color(25, 25, 25));
 
-        // Create and configure the label (at NORTH position)
-        // JLabel label = new JLabel(methodName, SwingConstants.CENTER);
-        // label.setFont(new Font(Start.FONT_NAME, Font.BOLD, 22));
-        // label.setForeground(Color.GREEN);
-        // label.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-        // mainPanel.add(label, BorderLayout.NORTH);
-
-        // Create text area
         JTextArea solutionTextArea = new JTextArea();
         solutionTextArea.setEditable(false);
         solutionTextArea.setFont(new Font(Start.FONT_NAME, Font.PLAIN, 18));
@@ -324,13 +314,12 @@ class MethodsSolutionFrame extends JFrame {
         scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
         scrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 0));
 
-        // Custom mouse wheel handling
         solutionTextArea.addMouseWheelListener(e -> {
             JScrollBar vertical = scrollPane.getVerticalScrollBar();
             JScrollBar horizontal = scrollPane.getHorizontalScrollBar();
             
             if (e.isControlDown()) {
-                // Zoom with Ctrl+Wheel
+                //? Zoom with Ctrl+Wheel
                 Font currentFont = solutionTextArea.getFont();
                 int newSize = currentFont.getSize() + (e.getWheelRotation() < 0 ? 1 : -1);
                 if (newSize > 8 && newSize < 72) {
@@ -338,12 +327,12 @@ class MethodsSolutionFrame extends JFrame {
                 }
                 e.consume();
             } else if (e.isShiftDown()) {
-                // Horizontal scroll with Shift+Wheel
+                //? Horizontal scroll with Shift+Wheel
                 int newValue = horizontal.getValue() + (e.getWheelRotation() * horizontal.getUnitIncrement());
                 horizontal.setValue(Math.max(horizontal.getMinimum(), Math.min(horizontal.getMaximum(), newValue)));
                 e.consume();
             } else {
-                // Normal vertical scrolling
+                //? Normal vertical scrolling
                 int newValue = vertical.getValue() + (e.getWheelRotation() * vertical.getUnitIncrement());
                 vertical.setValue(Math.max(vertical.getMinimum(), Math.min(vertical.getMaximum(), newValue)));
                 e.consume();
@@ -354,31 +343,13 @@ class MethodsSolutionFrame extends JFrame {
         add(mainPanel, BorderLayout.CENTER);
         setVisible(true);
         
-
-        //? Test
-        // System.out.println("Test");
-        // for (String string : inputs) {
-        //     System.out.println(string);
-        // }
-        // System.out.println("Test");
-
-
-
-        //? Test
-        // System.out.println(correct);
-        // System.out.println("Method Name: "  + methodName);
-        
         List<String> soln = new ArrayList<>();
         List<String> ans = new ArrayList<>();
-        // String solutionText;
         
         switch (methodName) {
             case "Fixed-Point Iteration Method":
                 Fixed_Point fpSolver = new Fixed_Point();
                 fpSolver.solve(inputs.get(0), Double.parseDouble(inputs.get(1)), Double.parseDouble(inputs.get(2)));
-                //? debug
-                // boolean smSuccess = smSolver.solve(@param);
-                // smSolver.printSolution(smSuccess);
                 soln = fpSolver.getSolutionSteps();
                 ans = fpSolver.getAnswers();
                 for (String string: soln){
@@ -388,11 +359,6 @@ class MethodsSolutionFrame extends JFrame {
                 for (String string: ans){
                     solutionTextArea.append(string + "\n");
                 }
-                // soln.addAll(ans);
-                
-                // // Join the solution steps with newlines and display in the text area
-                // solutionText = String.join("\n", soln);
-                // solutionTextArea.setText(solutionText);
                 break;
             case "Newton-Rhapson Method":
                 Newton_Raphson nr_solver = new Newton_Raphson();
@@ -406,20 +372,12 @@ class MethodsSolutionFrame extends JFrame {
                 for (String string: ans){
                     solutionTextArea.append(string + "\n");
                 }
-                // soln.addAll(ans);
-                
-                // // Join the solution steps with newlines and display in the text area
-                // solutionText = String.join("\n", soln);
-                // solutionTextArea.setText(solutionText);
                 break;
             
             
             case "Secant Method":
                 Secant_Method smSolver = new Secant_Method();
                 smSolver.solve(inputs.get(0), Double.parseDouble(inputs.get(1)), Double.parseDouble(inputs.get(2)),Double.parseDouble(inputs.get(3)));
-                //? debug
-                // boolean smSuccess = smSolver.solve(@param);
-                // smSolver.printSolution(smSuccess);
                 soln = smSolver.getSolutionSteps();
                 ans = smSolver.getAnswers();
                 for (String string: soln){
@@ -429,11 +387,6 @@ class MethodsSolutionFrame extends JFrame {
                 for (String string: ans){
                     solutionTextArea.append(string + "\n");
                 }
-                // soln.addAll(ans);
-                
-                // // Join the solution steps with newlines and display in the text area
-                // solutionText = String.join("\n", soln);
-                // solutionTextArea.setText(solutionText);
                 break;
             case "Bisection Method":
                 Bisection bm_solver = new Bisection();
@@ -447,11 +400,6 @@ class MethodsSolutionFrame extends JFrame {
                 for (String string: ans){
                     solutionTextArea.append(string + "\n");
                 }
-                // soln.addAll(ans);
-                
-                // // Join the solution steps with newlines and display in the text area
-                // solutionText = String.join("\n", soln);
-                // solutionTextArea.setText(solutionText);
                 break;
             case "False Position or Regular Falsi Method":
                 False_Position fp_solver = new False_Position();
@@ -465,11 +413,6 @@ class MethodsSolutionFrame extends JFrame {
                 for (String string: ans){
                     solutionTextArea.append(string + "\n");
                 }
-                // soln.addAll(ans);
-                
-                // // Join the solution steps with newlines and display in the text area
-                // solutionText = String.join("\n", soln);
-                // solutionTextArea.setText(solutionText);
                 break;
         
             default:
@@ -482,8 +425,6 @@ class MethodsSolutionFrame extends JFrame {
     }
 }
 
-
-// TODO: Grab values from input fields;
 class MatrixSolutionFrame extends JFrame {
 
     public MatrixSolutionFrame(String methodName, double[][] matrix, double[] constants) {
@@ -493,18 +434,9 @@ class MatrixSolutionFrame extends JFrame {
         getContentPane().setBackground(new Color(25, 25, 25));
         setLayout(new BorderLayout());
 
-        // Create main panel with BorderLayout
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(new Color(25, 25, 25));
 
-        // Create and configure the label (at NORTH position)
-        // JLabel label = new JLabel(methodName, SwingConstants.CENTER);
-        // label.setFont(new Font(Start.FONT_NAME, Font.BOLD, 22));
-        // label.setForeground(Color.GREEN);
-        // label.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-        // mainPanel.add(label, BorderLayout.NORTH);
-
-        // Create text area
         JTextArea solutionTextArea = new JTextArea();
         solutionTextArea.setEditable(false);
         solutionTextArea.setFont(new Font(Start.FONT_NAME, Font.PLAIN, 18));
@@ -523,13 +455,11 @@ class MatrixSolutionFrame extends JFrame {
         scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
         scrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 0));
 
-        // Custom mouse wheel handling
         solutionTextArea.addMouseWheelListener(e -> {
             JScrollBar vertical = scrollPane.getVerticalScrollBar();
             JScrollBar horizontal = scrollPane.getHorizontalScrollBar();
             
             if (e.isControlDown()) {
-                // Zoom with Ctrl+Wheel
                 Font currentFont = solutionTextArea.getFont();
                 int newSize = currentFont.getSize() + (e.getWheelRotation() < 0 ? 1 : -1);
                 if (newSize > 8 && newSize < 72) {
@@ -537,12 +467,10 @@ class MatrixSolutionFrame extends JFrame {
                 }
                 e.consume();
             } else if (e.isShiftDown()) {
-                // Horizontal scroll with Shift+Wheel
                 int newValue = horizontal.getValue() + (e.getWheelRotation() * horizontal.getUnitIncrement());
                 horizontal.setValue(Math.max(horizontal.getMinimum(), Math.min(horizontal.getMaximum(), newValue)));
                 e.consume();
             } else {
-                // Normal vertical scrolling
                 int newValue = vertical.getValue() + (e.getWheelRotation() * vertical.getUnitIncrement());
                 vertical.setValue(Math.max(vertical.getMinimum(), Math.min(vertical.getMaximum(), newValue)));
                 e.consume();
@@ -553,21 +481,8 @@ class MatrixSolutionFrame extends JFrame {
         add(mainPanel, BorderLayout.CENTER);
         setVisible(true);
 
-        //? Test
-        // for (double[] d : matrix) {
-        //     for (double e : d) {
-        //         System.out.println(e);
-        //     }
-        // }
-        // System.out.println();
-        // System.out.println();
-        // System.out.println();
-        // for (double d : constants) {
-        //     System.out.println(d);
-        // }
         List<String> soln = new ArrayList<>();
         List<String> ans = new ArrayList<>();
-        // String solutionText;
 
         switch (methodName) {
             case "Cramer's Rule":
@@ -582,10 +497,6 @@ class MatrixSolutionFrame extends JFrame {
                 for (String string: ans){
                     solutionTextArea.append(string + "\n");
                 }
-                // soln.addAll(ans);
-
-                // solutionText = String.join("\n", soln);
-                // solutionTextArea.setText(solutionText);
                 break;
             case "Gaussian Elimination":
                 Gaussian_Elimination geSolver = new Gaussian_Elimination();
@@ -601,10 +512,6 @@ class MatrixSolutionFrame extends JFrame {
                 for (String string: ans){
                     solutionTextArea.append(string + "\n");
                 }
-                // soln.addAll(ans);
-
-                // solutionText = String.join("\n", soln);
-                // solutionTextArea.setText(solutionText);
                 break;
             case "Jacobi Method":
                 Jacobi jSolver = new Jacobi();
@@ -619,10 +526,6 @@ class MatrixSolutionFrame extends JFrame {
                 for (String string: ans){
                     solutionTextArea.append(string + "\n");
                 }
-                // soln.addAll(ans);
-
-                // solutionText = String.join("\n", soln);
-                // solutionTextArea.setText(solutionText);
                 break;
             case "Gauss-Seidel Method":
                 Gauss_Seidel gsSolver = new Gauss_Seidel();
@@ -637,10 +540,6 @@ class MatrixSolutionFrame extends JFrame {
                 for (String string: ans){
                     solutionTextArea.append(string + "\n");
                 }
-                // soln.addAll(ans);
-
-                // solutionText = String.join("\n", soln);
-                // solutionTextArea.setText(solutionText);
                 break;
         
             default:
@@ -684,7 +583,7 @@ class MatrixInputFrame extends JFrame {
     }
 
     private void styleMatrixField(JTextField tf, int row, int col) {
-        styleMatrixField(tf, row, col, false); // Default version without debug numbers
+        styleMatrixField(tf, row, col, false); 
     }
 
     private void styleMatrixField(JTextField tf, int row, int col, boolean debugMode) {
@@ -719,13 +618,13 @@ class MatrixInputFrame extends JFrame {
         });
     }
 
-    // Helper method to generate random matrix values for debugging
     private int getRandomMatrixValue() {
-        return (int) (Math.random() * 100) + 1; // Returns random number between 1-100
+        //?DEBUG MODE for matrix
+        return (int) (Math.random() * 1000) + 1; 
     }
 
     private void styleConstantField(JTextField tf, int row) {
-        styleConstantField(tf, row, false); // Default version without debug numbers
+        styleConstantField(tf, row, false);
     }
 
     private void styleConstantField(JTextField tf, int row, boolean debugMode) {
@@ -760,9 +659,6 @@ class MatrixInputFrame extends JFrame {
         });
     }
 
-
-
-
     public MatrixInputFrame(String methodName) {
         setTitle(methodName + " Input");
         setSize(700, 600);
@@ -778,33 +674,43 @@ class MatrixInputFrame extends JFrame {
 
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.setBackground(new Color(25, 25, 25));
+
         JPanel controlPanel = new JPanel(new FlowLayout());
         controlPanel.setBackground(new Color(25, 25, 25));
+        
         JLabel sizeLabel = new JLabel("Matrix size (n x n):");
         sizeLabel.setForeground(Color.GREEN);
         controlPanel.add(sizeLabel);
+
         JSpinner sizeSpinner = new JSpinner(new SpinnerNumberModel(2, 1, 50, 1));
         controlPanel.add(sizeSpinner);
+
         JButton generateBtn = new JButton("Generate");
         generateBtn.setBackground(new Color(60, 80, 60));
         generateBtn.setForeground(Color.GREEN);
         controlPanel.add(generateBtn);
         centerPanel.add(controlPanel, BorderLayout.NORTH);
+
         JPanel matrixPanel = new JPanel(new GridBagLayout());
         matrixPanel.setBackground(new Color(25, 25, 25));
+
         JPanel constantsPanel = new JPanel(new GridBagLayout());
         constantsPanel.setBackground(new Color(25, 25, 25));
+
         JScrollPane matrixScroll = new JScrollPane(matrixPanel);
         matrixScroll.setPreferredSize(new Dimension(350, 250));
         matrixScroll.getHorizontalScrollBar().setUnitIncrement(32);
         matrixScroll.getVerticalScrollBar().setUnitIncrement(32);
         centerPanel.add(matrixScroll, BorderLayout.CENTER);
+
         JScrollPane constantsScroll = new JScrollPane(constantsPanel);
         constantsScroll.getVerticalScrollBar().setUnitIncrement(32);
         constantsScroll.getHorizontalScrollBar().setUnitIncrement(32);
         constantsScroll.setPreferredSize(new Dimension(120, 250));
         centerPanel.add(constantsScroll, BorderLayout.EAST);
+
         add(centerPanel, BorderLayout.CENTER);
+
         generateBtn.addActionListener(e -> {
             matrixPanel.removeAll(); constantsPanel.removeAll();
             int n = (Integer) sizeSpinner.getValue();
@@ -819,9 +725,10 @@ class MatrixInputFrame extends JFrame {
                 for (int col = 0; col < n; col++) {
                     gbc.gridx = col; gbc.gridy = row;
                     JTextField tf = new JTextField("A[" + (row + 1) + "," + (col + 1) + "]");
+                    tf.setSize(10, 6);
 
                     //todo: Debug mode
-                    styleMatrixField(tf, row, col, true); // You can put your existing styling and focus code here
+                    styleMatrixField(tf, row, col, false);
                     matrixFields[row][col] = tf;
                     matrixPanel.add(tf, gbc);
                 }
@@ -831,26 +738,29 @@ class MatrixInputFrame extends JFrame {
                 JTextField tf = new JTextField("B[" + (row + 1) + "]");
 
                 //todo: Debug mode
-                styleConstantField(tf, row,true); // Move your focus styling code into a method for clarity
+                styleConstantField(tf, row,false);
                 constantFields[row] = tf;
                 constantsPanel.add(tf, gbc);
             }
             matrixPanel.revalidate(); matrixPanel.repaint();
             constantsPanel.revalidate(); constantsPanel.repaint();
         });
+
         JButton closeButton = new JButton("Close");
         JButton solveButton = new JButton("Solve");
+
         for (JButton b : new JButton[]{solveButton, closeButton}) {
             b.setFont(new Font(Start.FONT_NAME, Font.BOLD, 18));
             b.setBackground(new Color(60, 80, 60));
             b.setForeground(Color.GREEN);
         }
+
         closeButton.addActionListener(e -> dispose());
+
         solveButton.addActionListener(e -> {
             try {
                 double[][] matrix = getMatrixValues();
                 double[] constants = getConstantValues();
-                // new MatrixSolutionFrame(matrix, constants); // assuming you update MatrixSolutionFrame constructor
                 new MatrixSolutionFrame(methodName, matrix, constants); // assuming you update MatrixSolutionFrame constructor
             } catch (RuntimeException ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -870,10 +780,13 @@ class OptionFrame extends JFrame {
         setTitle("Choose a Method");
         setSize(1280, 720);
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
         JPanel mainPanel = new JPanel(new GridBagLayout());
         mainPanel.setBackground(new Color(25, 25, 25));
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(18, 18, 18, 18);
+
         JLabel label = new JLabel("Select a Method:", SwingConstants.CENTER);
         label.setFont(new Font(Start.FONT_NAME, Font.BOLD, 32));
         label.setForeground(Color.GREEN);
@@ -881,6 +794,7 @@ class OptionFrame extends JFrame {
         gbc.anchor = GridBagConstraints.PAGE_START;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         mainPanel.add(label, gbc);
+
         String[] options = {
             "Fixed-Point Iteration Method",
             "Newton-Rhapson Method",
@@ -892,19 +806,24 @@ class OptionFrame extends JFrame {
             "Jacobi Method",
             "Gauss-Seidel Method"
         };
+
         gbc.gridwidth = 1; gbc.fill = GridBagConstraints.NONE;
+
         for (int i = 0; i < options.length; i++) {
             JButton btn = Start.createButton(options[i], 30, 20);
             btn.setPreferredSize(new Dimension(400, 50));
+
             String methodName = options[i];
             btn.addActionListener(e -> {
                 if (methodName.contains("Cramer") || methodName.contains("Gaussian") || methodName.contains("Jacobi") || methodName.contains("Gauss-Seidel"))
                     new MatrixInputFrame(methodName);
                 else new MethodInputFrame(methodName);
             });
+
             gbc.gridx = i % 2; gbc.gridy = 1 + (i / 2);
             mainPanel.add(btn, gbc);
         }
+        
         setContentPane(mainPanel);
         getContentPane().setBackground(new Color(25, 25, 25));
         setLocationRelativeTo(null);

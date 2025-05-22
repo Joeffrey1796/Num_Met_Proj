@@ -5,12 +5,10 @@ import java.util.List;
 import java.text.DecimalFormat;
 import include.utils.Fraction;
 
-
-// Note: AI genereated documentation hehehe
 public class Gaussian_Elimination {
     
-    private List<String> msgSoln;  // List to store solution steps
-    private List<String> answers;  // List to store final answers
+    private List<String> msgSoln;
+    private List<String> answers; 
     
     public static void main(String[] args) {
         //TODO: Example usage

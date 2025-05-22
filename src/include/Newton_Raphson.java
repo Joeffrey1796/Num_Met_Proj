@@ -9,7 +9,7 @@ import net.objecthunter.exp4j.ExpressionBuilder;
 public class Newton_Raphson {
     private List<String> msgSoln;
     private List<String> answers;
-    private Queue<Double> iterationValues;  // Changed from List<Double> to Queue<Double>
+    private Queue<Double> iterationValues;
     private String functionExpression;
     private double tolerance;
     private DecimalFormat decimalFormat;
@@ -28,7 +28,7 @@ public class Newton_Raphson {
     public Newton_Raphson(double tolerance, int maxIterations, double derivativeStepSize) {
         this.msgSoln = new LinkedList<>();
         this.answers = new LinkedList<>();
-        this.iterationValues = new LinkedList<>(); // LinkedList implements Queue
+        this.iterationValues = new LinkedList<>();
         this.fixedFormat = new DecimalFormat("0.000");
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         symbols.setDecimalSeparator('.');
@@ -46,7 +46,7 @@ public class Newton_Raphson {
         return answers;
     }
 
-    public Queue<Double> getIterationValues() {  // Updated return type
+    public Queue<Double> getIterationValues() {  
         return iterationValues;
     }
 
@@ -154,7 +154,7 @@ public class Newton_Raphson {
 
         double fx = f(x);
         double dfx = derivative(x);
-        iterationValues.add(x);  // Queue's add() method
+        iterationValues.add(x);
 
         msgSoln.add(String.format("Iteration %d:", iteration));
         msgSoln.add(String.format("  x%d = %s", iteration, formatNumber(x)));
@@ -205,7 +205,7 @@ public class Newton_Raphson {
     }
 
     public static void main(String[] args) {
-        // Example usages:
+        //? Example usages:
         
         // 1. Using default tolerance (0.0001)
         Newton_Raphson solver1 = new Newton_Raphson();

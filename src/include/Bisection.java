@@ -25,8 +25,8 @@ public class Bisection {
     }
 
     public Bisection(double tolerance, int maxIterations) {
-        this.msgSoln = new Stack<>();  // Changed to Stack
-        this.answers = new Stack<>();  // Changed to Stack
+        this.msgSoln = new Stack<>();
+        this.answers = new Stack<>();
         this.iterationValues = new ArrayList<>();
         this.fixedFormat = new DecimalFormat("0.000");
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
@@ -36,11 +36,11 @@ public class Bisection {
         this.maxIterations = maxIterations;
     }
 
-    public Stack<String> getSolutionSteps() {  // Changed return type to Stack
+    public Stack<String> getSolutionSteps() {
         return msgSoln;
     }
 
-    public Stack<String> getAnswers() {       // Changed return type to Stack
+    public Stack<String> getAnswers() {
         return answers;
     }
 
@@ -113,8 +113,8 @@ public class Bisection {
         this.functionExpression = function;
         setTolerance(tolerance);
 
-        msgSoln.push("Using tolerance: " + formatNumber(tolerance));  // Changed to push()
-        msgSoln.push("Maximum iterations: " + maxIterations);         // Changed to push()
+        msgSoln.push("Using tolerance: " + formatNumber(tolerance)); 
+        msgSoln.push("Maximum iterations: " + maxIterations);
         
         try {
             double fa = f(a);
@@ -134,7 +134,7 @@ public class Bisection {
 
             double root = bisectionRecursive(a, b, fa, fb, 1);
 
-            answers.push("Root found: " + formatNumber(root));       // Changed to push()
+            answers.push("Root found: " + formatNumber(root));
             answers.push("Number of iterations: " + iterationValues.size());
             answers.push("Final tolerance: " + formatNumber(tolerance));
             
@@ -184,7 +184,6 @@ public class Bisection {
 
         if (success) {
             System.out.println("Solution Steps:");
-            // Need to reverse the stack to print in correct order
             List<String> reversedSteps = new ArrayList<>(msgSoln);
             Collections.reverse(reversedSteps);
             for (String step : reversedSteps) {
@@ -192,7 +191,6 @@ public class Bisection {
             }
             
             System.out.println("\nFinal Answers:");
-            // Need to reverse the answers stack to print in correct order
             List<String> reversedAnswers = new ArrayList<>(answers);
             Collections.reverse(reversedAnswers);
             for (String answer : reversedAnswers) {
@@ -209,7 +207,7 @@ public class Bisection {
     }
 
     public static void main(String[] args) {
-        // Example usages:
+        //? Example usages:
         
         // 3. Specifying tolerance at solve time (0.00001)
         Bisection solver3 = new Bisection();

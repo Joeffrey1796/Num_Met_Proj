@@ -2,14 +2,13 @@ package include;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
 public class False_Position {
-    private Queue<String> msgSoln;  // Changed to Queue
-    private Queue<String> answers;  // Changed to Queue
+    private Queue<String> msgSoln;  
+    private Queue<String> answers;
     private LinkedList<Double> iterationValues;
     private String functionExpression;
     private double tolerance;
@@ -26,8 +25,8 @@ public class False_Position {
     }
 
     public False_Position(double tolerance, int maxIterations) {
-        this.msgSoln = new LinkedList<>();  // Changed to LinkedList implementing Queue
-        this.answers = new LinkedList<>();   // Changed to LinkedList implementing Queue
+        this.msgSoln = new LinkedList<>();
+        this.answers = new LinkedList<>();
         this.iterationValues = new LinkedList<>();
         this.fixedFormat = new DecimalFormat("0.000");
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
@@ -37,11 +36,11 @@ public class False_Position {
         this.maxIterations = maxIterations;
     }
 
-    public Queue<String> getSolutionSteps() {  // Changed return type to Queue
+    public Queue<String> getSolutionSteps() {
         return msgSoln;
     }
 
-    public Queue<String> getAnswers() {        // Changed return type to Queue
+    public Queue<String> getAnswers() {
         return answers;
     }
 
@@ -190,12 +189,12 @@ public class False_Position {
 
         if (success) {
             System.out.println("Solution Steps:");
-            for (String step : msgSoln) {  // Queue can be iterated like this
+            for (String step : msgSoln) {  
                 System.out.println(step);
             }
             
             System.out.println("\nFinal Answers:");
-            for (String answer : answers) {  // Queue can be iterated like this
+            for (String answer : answers) { 
                 System.out.println(answer);
             }
         } else {
@@ -207,7 +206,7 @@ public class False_Position {
     }
 
     public static void main(String[] args) {
-        // Example usages:
+        //? Example usage:
         
         // 1. Using default tolerance (0.0001)
         False_Position solver1 = new False_Position();

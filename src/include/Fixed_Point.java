@@ -8,8 +8,8 @@ import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
 public class Fixed_Point {
-    private LinkedList<String> msgSoln;  // Changed to LinkedList
-    private LinkedList<String> answers;  // Changed to LinkedList
+    private LinkedList<String> msgSoln;
+    private LinkedList<String> answers;
     private Stack<Double> iterationValues;
     private String functionExpression;
     private double tolerance;
@@ -26,8 +26,8 @@ public class Fixed_Point {
     }
 
     public Fixed_Point(double tolerance, int maxIterations) {
-        this.msgSoln = new LinkedList<>();  // Initialize as LinkedList
-        this.answers = new LinkedList<>();   // Initialize as LinkedList
+        this.msgSoln = new LinkedList<>();
+        this.answers = new LinkedList<>();
         this.iterationValues = new Stack<>();
         this.fixedFormat = new DecimalFormat("0.000");
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
@@ -37,11 +37,11 @@ public class Fixed_Point {
         this.maxIterations = maxIterations;
     }
 
-    public LinkedList<String> getSolutionSteps() {  // Changed return type to LinkedList
+    public LinkedList<String> getSolutionSteps() {
         return msgSoln;
     }
 
-    public LinkedList<String> getAnswers() {       // Changed return type to LinkedList
+    public LinkedList<String> getAnswers() {
         return answers;
     }
 
@@ -125,7 +125,7 @@ public class Fixed_Point {
         this.functionExpression = function;
         setTolerance(tolerance);
 
-        msgSoln.add("Using tolerance: " + formatNumber(tolerance));  // add() works with LinkedList
+        msgSoln.add("Using tolerance: " + formatNumber(tolerance));
         msgSoln.add("Maximum iterations: " + maxIterations);
         
         try {
@@ -186,12 +186,12 @@ public class Fixed_Point {
 
         if (success) {
             System.out.println("Solution Steps:");
-            for (String step : msgSoln) {  // LinkedList can be iterated directly
+            for (String step : msgSoln) {
                 System.out.println(step);
             }
             
             System.out.println("\nFinal Answers:");
-            for (String answer : answers) {  // LinkedList can be iterated directly
+            for (String answer : answers) {
                 System.out.println(answer);
             }
         } else {
@@ -203,7 +203,7 @@ public class Fixed_Point {
     }
 
     public static void main(String[] args) {
-        // Example usages:
+        //? Example usages:
         
         // 1. Using default tolerance (0.0001)
         Fixed_Point solver1 = new Fixed_Point();

@@ -2,9 +2,7 @@ package include;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import include.utils.Fraction;
 
@@ -149,13 +147,11 @@ public class Cramers_Rule {
         msgSoln.clear();
         answers.clear();
 
-        // Convert input arrays to LinkedLists
         LinkedList<LinkedList<Double>> listA = convertToLinkedList(A);
         LinkedList<Double> listB = convertToLinkedList(B);
 
         int n = listA.size();
         
-        // Validate matrices
         if (n < 2) {
             msgSoln.add("Error: System must have at least 2 variables.");
             return false;
@@ -174,7 +170,6 @@ public class Cramers_Rule {
         }
         msgSoln.add("");
 
-        // Calculate determinant of A
         double detAValue = determinant(listA);
         Fraction detA = new Fraction(detAValue);
         msgSoln.add("Step 1: Calculate determinant of A");
@@ -186,7 +181,6 @@ public class Cramers_Rule {
             return false;
         }
 
-        // Solve for each variable
         for (int i = 0; i < n; i++) {
             LinkedList<LinkedList<Double>> Ai = replaceColumn(listA, listB, i);
             msgSoln.add("Step " + (i + 2) + ": Matrix A" + (i + 1) + 
@@ -231,17 +225,10 @@ public class Cramers_Rule {
     }
 
     public static void main(String[] args) {
-        // Example usage:
+        //? Example usage:
         
         // 1. Using default tolerance (0.0001)
         Cramers_Rule solver1 = new Cramers_Rule();
-        // double[][] matrixA = {
-        //     {2, -1, -3},
-        //     {1, 4, -2},
-        //     {3, 1, 5}
-        // };
-        // double[] matrixB = {5, 1, 2};
-
         double[][] matrixA = {
             {2,-1},
             {1,1}

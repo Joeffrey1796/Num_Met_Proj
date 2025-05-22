@@ -14,7 +14,7 @@ public class Secant_Method {
     private String functionExpression;
     private double tolerance;
     private DecimalFormat decimalFormat;
-    private DecimalFormat fixedFormat; // For function evaluation display
+    private DecimalFormat fixedFormat; 
 
     public Secant_Method() {
         this(0.0001);
@@ -59,7 +59,7 @@ public class Secant_Method {
     if (decimalPlaces > 0) {
         pattern.append(".");
         for (int i = 0; i < decimalPlaces; i++) {
-            pattern.append("0"); // use '0' instead of '#' for fixed width
+            pattern.append("0"); 
         }
     }
 
@@ -173,8 +173,6 @@ public class Secant_Method {
     public void printSolution(boolean success) {
         System.out.println(functionExpression);
         System.out.println(tolerance);
-        // System.out.println(decimalFormat.toString());
-        // System.out.println(fixedFormat.toString());
         System.out.println();
 
         if (success) {
@@ -196,7 +194,7 @@ public class Secant_Method {
     }
 
     public static void main(String[] args) {
-        // Example usages:
+        //? Example usages:
         
         // 1. Using default tolerance (0.0001)
         Secant_Method solver1 = new Secant_Method();
