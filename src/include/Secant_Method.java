@@ -14,13 +14,26 @@ public class Secant_Method {
     private String functionExpression;
     private double tolerance;
     private DecimalFormat decimalFormat;
-    private DecimalFormat fixedFormat; 
+    private DecimalFormat fixedFormat;
+    private String variable;
 
+    // Default constructor with default variable "x"
     public Secant_Method() {
-        this(0.0001);
+        this(0.0001, "x");
     }
 
+    // Constructor with tolerance only
     public Secant_Method(double tolerance) {
+        this(tolerance, "x");
+    }
+
+    // Constructor with variable name
+    public Secant_Method(String var) {
+        this(0.0001, var);
+    }
+
+    // Full constructor with tolerance and variable name
+    public Secant_Method(double tolerance, String var) {
         this.msgSoln = new ArrayList<>();
         this.answers = new ArrayList<>();
         this.iterationValues = new ArrayList<>();
@@ -29,8 +42,9 @@ public class Secant_Method {
         symbols.setDecimalSeparator('.');
         fixedFormat.setDecimalFormatSymbols(symbols);
         setTolerance(tolerance);
+        this.variable = var;
     }
-   
+
     public List<String> getSolutionSteps() {
         return msgSoln;
     }
@@ -53,25 +67,25 @@ public class Secant_Method {
     }
 
     private void updateDecimalFormat() {
-    int decimalPlaces = Math.max(1, (int) Math.ceil(-Math.log10(tolerance)));
-    
-    StringBuilder pattern = new StringBuilder("0");
-    if (decimalPlaces > 0) {
-        pattern.append(".");
-        for (int i = 0; i < decimalPlaces; i++) {
-            pattern.append("0"); 
+        int decimalPlaces = Math.max(1, (int) Math.ceil(-Math.log10(tolerance)));
+        
+        StringBuilder pattern = new StringBuilder("0");
+        if (decimalPlaces > 0) {
+            pattern.append(".");
+            for (int i = 0; i < decimalPlaces; i++) {
+                pattern.append("0"); 
+            }
         }
+
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setDecimalSeparator('.');
+
+        this.decimalFormat = new DecimalFormat(pattern.toString());
+        this.decimalFormat.setDecimalFormatSymbols(symbols);
+
+        this.fixedFormat = new DecimalFormat(pattern.toString());
+        this.fixedFormat.setDecimalFormatSymbols(symbols);
     }
-
-    DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-    symbols.setDecimalSeparator('.');
-
-    this.decimalFormat = new DecimalFormat(pattern.toString());
-    this.decimalFormat.setDecimalFormatSymbols(symbols);
-
-    this.fixedFormat = new DecimalFormat(pattern.toString());
-    this.fixedFormat.setDecimalFormatSymbols(symbols);
-}
 
     private String formatNumber(double value) {
         return decimalFormat.format(value);
@@ -82,15 +96,15 @@ public class Secant_Method {
     }
 
     private String getFunctionEvaluationString(double x) {
-        return functionExpression.replaceAll("x", formatFixed(x));
+        return functionExpression.replaceAll(variable, formatFixed(x));
     }
     
     private double f(double x) throws IllegalArgumentException {
         try {
             Expression e = new ExpressionBuilder(functionExpression)
-                .variables("x")
+                .variables(variable)
                 .build()
-                .setVariable("x", x);
+                .setVariable(variable, x);
             return e.evaluate();
         } catch (Exception e) {
             throw new IllegalArgumentException("Error evaluating function: " + e.getMessage());
@@ -194,27 +208,32 @@ public class Secant_Method {
     }
 
     public static void main(String[] args) {
-        //? Example usages:
+        // Example usages showing all constructor variations:
         
-        // 1. Using default tolerance (0.0001)
+        // 1. Using default constructor
         Secant_Method solver1 = new Secant_Method();
         boolean success1 = solver1.solve("x^3 + x - 1", 0.0, 1.0);
-
-        System.out.println();
         solver1.printSolution(success1);
 
         System.out.println("\n--------------------------------\n");
         
-        // 2. Specifying custom tolerance (0.001)
-        Secant_Method solver2 = new Secant_Method(0.001);
-        boolean success2 = solver2.solve("x^3 + x - 1", 0.0, 1.0);
+        // 2. Using constructor with variable name
+        Secant_Method solver2 = new Secant_Method("y");
+        boolean success2 = solver2.solve("y^3 + y - 1", 0.0, 1.0);
         solver2.printSolution(success2);
 
         System.out.println("\n--------------------------------\n");
         
-        // 3. Specifying tolerance at solve time (0.00001)
-        Secant_Method solver3 = new Secant_Method();
-        boolean success3 = solver3.solve("x^3 + x - 1", 0.0, 1.0, 0.1);
+        // 3. Using constructor with tolerance
+        Secant_Method solver3 = new Secant_Method(0.001);
+        boolean success3 = solver3.solve("x^3 + x - 1", 0.0, 1.0);
         solver3.printSolution(success3);
+
+        System.out.println("\n--------------------------------\n");
+        
+        // 4. Specifying tolerance at solve time
+        Secant_Method solver4 = new Secant_Method();
+        boolean success4 = solver4.solve("x^3 + x - 1", 0.0, 1.0, 0.1);
+        solver4.printSolution(success4);
     }
 }

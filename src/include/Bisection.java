@@ -7,24 +7,43 @@ import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
 public class Bisection {
-    private Stack<String> msgSoln;  // Changed to Stack
-    private Stack<String> answers;  // Changed to Stack
+    private Stack<String> msgSoln;
+    private Stack<String> answers;
     private List<Double> iterationValues;
     private String functionExpression;
     private double tolerance;
     private DecimalFormat decimalFormat;
     private DecimalFormat fixedFormat;
     private int maxIterations;
+    private String variable;
 
+    // Default constructor with default variable "x"
     public Bisection() {
-        this(0.0001, 1000);
+        this(0.0001, 1000, "x");
     }
 
+    // Constructor with tolerance only
     public Bisection(double tolerance) {
-        this(tolerance, 1000);
+        this(tolerance, 1000, "x");
     }
 
+    // Constructor with max iterations only
+    public Bisection(int maxIterations) {
+        this(0.0001, maxIterations, "x");
+    }
+
+    // Constructor with variable name
+    public Bisection(String var) {
+        this(0.0001, 1000, var);
+    }
+
+    // Constructor with tolerance and max iterations
     public Bisection(double tolerance, int maxIterations) {
+        this(tolerance, maxIterations, "x");
+    }
+
+    // Full constructor with all parameters
+    public Bisection(double tolerance, int maxIterations, String var) {
         this.msgSoln = new Stack<>();
         this.answers = new Stack<>();
         this.iterationValues = new ArrayList<>();
@@ -34,6 +53,7 @@ public class Bisection {
         fixedFormat.setDecimalFormatSymbols(symbols);
         setTolerance(tolerance);
         this.maxIterations = maxIterations;
+        this.variable = var;
     }
 
     public Stack<String> getSolutionSteps() {
@@ -87,15 +107,15 @@ public class Bisection {
     }
 
     private String getFunctionEvaluationString(double x) {
-        return functionExpression.replaceAll("x", formatFixed(x));
+        return functionExpression.replaceAll(variable, formatFixed(x));
     }
     
     private double f(double x) throws IllegalArgumentException {
         try {
             Expression e = new ExpressionBuilder(functionExpression)
-                .variables("x")
+                .variables(variable)
                 .build()
-                .setVariable("x", x);
+                .setVariable(variable, x);
             return e.evaluate();
         } catch (Exception e) {
             throw new IllegalArgumentException("Error evaluating function: " + e.getMessage());
@@ -207,11 +227,32 @@ public class Bisection {
     }
 
     public static void main(String[] args) {
-        //? Example usages:
+        // Example usages showing all constructor variations:
         
-        // 3. Specifying tolerance at solve time (0.00001)
-        Bisection solver3 = new Bisection();
-        boolean success3 = solver3.solve("x^3 - 4cos(x)", 1.0, 2.0, 0.1);
+        // 1. Using default constructor
+        Bisection solver1 = new Bisection();
+        boolean success1 = solver1.solve("x^3 - 4cos(x)", 1.0, 2.0);
+        solver1.printSolution(success1);
+
+        System.out.println("\n--------------------------------\n");
+        
+        // 2. Using constructor with variable name
+        Bisection solver2 = new Bisection("y");
+        boolean success2 = solver2.solve("y^3 - 4cos(y)", 1.0, 2.0);
+        solver2.printSolution(success2);
+
+        System.out.println("\n--------------------------------\n");
+        
+        // 3. Using constructor with tolerance
+        Bisection solver3 = new Bisection(0.001);
+        boolean success3 = solver3.solve("x^3 - 4cos(x)", 1.0, 2.0);
         solver3.printSolution(success3);
+
+        System.out.println("\n--------------------------------\n");
+        
+        // 4. Specifying tolerance at solve time
+        Bisection solver4 = new Bisection();
+        boolean success4 = solver4.solve("x^3 - 4cos(x)", 1.0, 2.0, 0.1);
+        solver4.printSolution(success4);
     }
 }

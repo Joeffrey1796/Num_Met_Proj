@@ -163,6 +163,64 @@ class MethodInputFrame extends JFrame {
         return true;
     }
 
+
+    private String getVariableFromEquation(String equation) {
+        // List of function names to skip
+        String[] functionsToSkip = {"sin", "cos", "tan", "cot", "sec", "csc", 
+                                "asin", "acos", "atan", "acot", "asec", "acsc",
+                                "sinh", "cosh", "tanh", "coth", "sech", "csch",
+                                "log", "ln", "exp", "sqrt", "abs","e"};
+        
+        for (int i = 0; i < equation.length(); i++) {
+            char c = equation.charAt(i);
+            // Check if character is a letter
+            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
+                // Check if it's part of a function name
+                boolean isFunction = false;
+                for (String func : functionsToSkip) {
+                    if (equation.startsWith(func, i)) {
+                        isFunction = true;
+                        i += func.length() - 1; // Skip ahead past this function
+                        break;
+                    }
+                }
+                
+                if (!isFunction) {
+                    return String.valueOf(c);
+                }
+            }
+        }
+        return null; // or return a default variable if none found
+    }
+
+    private boolean allVariablesMatch(String equation, String targetVariable) {
+        String[] functionsToSkip = {"sin", "cos", "tan", "cot", "sec", "csc", 
+                                    "asin", "acos", "atan", "acot", "asec", "acsc",
+                                    "sinh", "cosh", "tanh", "coth", "sech", "csch",
+                                    "log", "ln", "exp", "sqrt", "abs","e"};
+
+        for (int i = 0; i < equation.length(); i++) {
+            char c = equation.charAt(i);
+
+            if (Character.isLetter(c)) {
+                boolean isFunction = false;
+                for (String func : functionsToSkip) {
+                    if (equation.startsWith(func, i)) {
+                        isFunction = true;
+                        i += func.length() - 1;
+                        break;
+                    }
+                }
+
+                if (!isFunction) {
+                    if (!String.valueOf(c).equals(targetVariable)) {
+                        return false; // Found another variable
+                    }
+                }
+            }
+        }
+        return true; // All variables match
+    }
     public MethodInputFrame(String methodName) {
         this.methodName = methodName;
         setTitle(methodName + " Input");
@@ -251,8 +309,21 @@ class MethodInputFrame extends JFrame {
                     }
                 }
             }
+
             if (correct) {
-                new MethodsSolutionFrame(methodName, inputs);
+                String equation = inputs.get(0);
+                String variable = getVariableFromEquation(equation);
+
+                //! Error for 2 or more variables instead of just 1;
+                if (variable == null || !allVariablesMatch(equation, variable)) {
+                    // Show an error or reject the input
+                    JOptionPane.showMessageDialog(null, "Error: Equation contains multiple variables.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                //todo: debug
+                // System.out.println(variable);
+                new MethodsSolutionFrame(methodName, inputs,variable);
             }
         });
         closeBtn.addActionListener(e -> dispose());
@@ -286,7 +357,7 @@ class MethodInputFrame extends JFrame {
 
 class MethodsSolutionFrame extends JFrame {
 
-    public MethodsSolutionFrame(String methodName, List<String> inputs) {
+    public MethodsSolutionFrame(String methodName, List<String> inputs, String variable) {
         setTitle(methodName + " Solution");
         setSize(800, 650);
         setLocationRelativeTo(null);
@@ -348,7 +419,7 @@ class MethodsSolutionFrame extends JFrame {
         
         switch (methodName) {
             case "Fixed-Point Iteration Method":
-                Fixed_Point fpSolver = new Fixed_Point();
+                Fixed_Point fpSolver = new Fixed_Point(variable);
                 fpSolver.solve(inputs.get(0), Double.parseDouble(inputs.get(1)), Double.parseDouble(inputs.get(2)));
                 soln = fpSolver.getSolutionSteps();
                 ans = fpSolver.getAnswers();
@@ -361,7 +432,7 @@ class MethodsSolutionFrame extends JFrame {
                 }
                 break;
             case "Newton-Rhapson Method":
-                Newton_Raphson nr_solver = new Newton_Raphson();
+                Newton_Raphson nr_solver = new Newton_Raphson(variable);
                 nr_solver.solve(inputs.get(0), Double.parseDouble(inputs.get(1)), Double.parseDouble(inputs.get(2)));
                 soln = nr_solver.getSolutionSteps();
                 ans = nr_solver.getAnswers();
@@ -376,7 +447,7 @@ class MethodsSolutionFrame extends JFrame {
             
             
             case "Secant Method":
-                Secant_Method smSolver = new Secant_Method();
+                Secant_Method smSolver = new Secant_Method(variable);
                 smSolver.solve(inputs.get(0), Double.parseDouble(inputs.get(1)), Double.parseDouble(inputs.get(2)),Double.parseDouble(inputs.get(3)));
                 soln = smSolver.getSolutionSteps();
                 ans = smSolver.getAnswers();
@@ -389,7 +460,7 @@ class MethodsSolutionFrame extends JFrame {
                 }
                 break;
             case "Bisection Method":
-                Bisection bm_solver = new Bisection();
+                Bisection bm_solver = new Bisection(variable);
                 bm_solver.solve(inputs.get(0), Double.parseDouble(inputs.get(1)), Double.parseDouble(inputs.get(2)),Double.parseDouble(inputs.get(3)));
                 soln = bm_solver.getSolutionSteps();
                 ans = bm_solver.getAnswers();
@@ -402,7 +473,7 @@ class MethodsSolutionFrame extends JFrame {
                 }
                 break;
             case "False Position or Regular Falsi Method":
-                False_Position fp_solver = new False_Position();
+                False_Position fp_solver = new False_Position(variable);
                 fp_solver.solve(inputs.get(0), Double.parseDouble(inputs.get(1)), Double.parseDouble(inputs.get(2)),Double.parseDouble(inputs.get(3)));
                 soln =  new ArrayList<>(fp_solver.getSolutionSteps());
                 ans = new ArrayList<>(fp_solver.getAnswers());

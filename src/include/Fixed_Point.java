@@ -16,16 +16,17 @@ public class Fixed_Point {
     private DecimalFormat decimalFormat;
     private DecimalFormat fixedFormat;
     private int maxIterations;
+    String variable;
 
-    public Fixed_Point() {
-        this(0.0001, 1000);
+    public Fixed_Point(String var) {
+        this(0.0001, 1000, var);
     }
 
     public Fixed_Point(double tolerance) {
-        this(tolerance, 1000);
+        this(tolerance, 1000, "x");
     }
 
-    public Fixed_Point(double tolerance, int maxIterations) {
+    public Fixed_Point(double tolerance, int maxIterations, String var) {
         this.msgSoln = new LinkedList<>();
         this.answers = new LinkedList<>();
         this.iterationValues = new Stack<>();
@@ -35,6 +36,7 @@ public class Fixed_Point {
         fixedFormat.setDecimalFormatSymbols(symbols);
         setTolerance(tolerance);
         this.maxIterations = maxIterations;
+        this.variable = var;
     }
 
     public LinkedList<String> getSolutionSteps() {
@@ -88,15 +90,15 @@ public class Fixed_Point {
     }
 
     private String getFunctionEvaluationString(double x) {
-        return functionExpression.replaceAll("x", formatFixed(x));
+        return functionExpression.replaceAll(variable, formatFixed(x));
     }
     
     private double f(double x) throws IllegalArgumentException {
         try {
             Expression e = new ExpressionBuilder(functionExpression)
-                .variables("x")
+                .variables(variable)
                 .build()
-                .setVariable("x", x);
+                .setVariable(variable, x);
             return e.evaluate();
         } catch (Exception e) {
             throw new IllegalArgumentException("Error evaluating function: " + e.getMessage());
@@ -206,7 +208,7 @@ public class Fixed_Point {
         //? Example usages:
         
         // 1. Using default tolerance (0.0001)
-        Fixed_Point solver1 = new Fixed_Point();
+        Fixed_Point solver1 = new Fixed_Point("x");
         boolean success1 = solver1.solve("(x+1)^(1/2)", 1.0);
 
         System.out.println();
@@ -222,7 +224,7 @@ public class Fixed_Point {
         System.out.println("\n--------------------------------\n");
         
         // 3. Specifying tolerance at solve time (0.00001)
-        Fixed_Point solver3 = new Fixed_Point();
+        Fixed_Point solver3 = new Fixed_Point("x");
         boolean success3 = solver3.solve("cos(2*x)", 0.5, 0.00001);
         solver3.printSolution(success3);
     }

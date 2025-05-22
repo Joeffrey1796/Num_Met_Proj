@@ -7,7 +7,7 @@ import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
 public class False_Position {
-    private Queue<String> msgSoln;  
+    private Queue<String> msgSoln;
     private Queue<String> answers;
     private LinkedList<Double> iterationValues;
     private String functionExpression;
@@ -15,16 +15,35 @@ public class False_Position {
     private DecimalFormat decimalFormat;
     private DecimalFormat fixedFormat;
     private int maxIterations;
+    private String variable;
 
+    // Default constructor with default variable "x"
     public False_Position() {
-        this(0.0001, 1000);
+        this(0.0001, 1000, "x");
     }
 
+    // Constructor with tolerance only
     public False_Position(double tolerance) {
-        this(tolerance, 1000);
+        this(tolerance, 1000, "x");
     }
 
+    // Constructor with max iterations only
+    public False_Position(int maxIterations) {
+        this(0.0001, maxIterations, "x");
+    }
+
+    // Constructor with variable name
+    public False_Position(String var) {
+        this(0.0001, 1000, var);
+    }
+
+    // Constructor with tolerance and max iterations
     public False_Position(double tolerance, int maxIterations) {
+        this(tolerance, maxIterations, "x");
+    }
+
+    // Full constructor with all parameters
+    public False_Position(double tolerance, int maxIterations, String var) {
         this.msgSoln = new LinkedList<>();
         this.answers = new LinkedList<>();
         this.iterationValues = new LinkedList<>();
@@ -34,6 +53,7 @@ public class False_Position {
         fixedFormat.setDecimalFormatSymbols(symbols);
         setTolerance(tolerance);
         this.maxIterations = maxIterations;
+        this.variable = var;
     }
 
     public Queue<String> getSolutionSteps() {
@@ -87,15 +107,15 @@ public class False_Position {
     }
 
     private String getFunctionEvaluationString(double x) {
-        return functionExpression.replaceAll("x", formatFixed(x));
+        return functionExpression.replaceAll(variable, formatFixed(x));
     }
     
     private double f(double x) throws IllegalArgumentException {
         try {
             Expression e = new ExpressionBuilder(functionExpression)
-                .variables("x")
+                .variables(variable)
                 .build()
-                .setVariable("x", x);
+                .setVariable(variable, x);
             return e.evaluate();
         } catch (Exception e) {
             throw new IllegalArgumentException("Error evaluating function: " + e.getMessage());
@@ -189,12 +209,12 @@ public class False_Position {
 
         if (success) {
             System.out.println("Solution Steps:");
-            for (String step : msgSoln) {  
+            for (String step : msgSoln) {
                 System.out.println(step);
             }
             
             System.out.println("\nFinal Answers:");
-            for (String answer : answers) { 
+            for (String answer : answers) {
                 System.out.println(answer);
             }
         } else {
@@ -206,27 +226,32 @@ public class False_Position {
     }
 
     public static void main(String[] args) {
-        //? Example usage:
+        // Example usages showing all constructor variations:
         
-        // 1. Using default tolerance (0.0001)
+        // 1. Using default constructor
         False_Position solver1 = new False_Position();
         boolean success1 = solver1.solve("x^3 - x - 1", 1.0, 2.0);
-
-        System.out.println();
         solver1.printSolution(success1);
 
         System.out.println("\n--------------------------------\n");
         
-        // 2. Specifying custom tolerance (0.001)
-        False_Position solver2 = new False_Position(0.000001);
-        boolean success2 = solver2.solve("x^3 - x - 1", 1.0, 2.0);
+        // 2. Using constructor with variable name
+        False_Position solver2 = new False_Position("y");
+        boolean success2 = solver2.solve("y^3 - y - 1", 1.0, 2.0);
         solver2.printSolution(success2);
 
         System.out.println("\n--------------------------------\n");
         
-        // 3. Specifying tolerance at solve time (0.00001)
-        False_Position solver3 = new False_Position();
-        boolean success3 = solver3.solve("x^3 - x - 1", 1.0, 2.0, 0.1);
+        // 3. Using constructor with tolerance
+        False_Position solver3 = new False_Position(0.000001);
+        boolean success3 = solver3.solve("x^3 - x - 1", 1.0, 2.0);
         solver3.printSolution(success3);
+
+        System.out.println("\n--------------------------------\n");
+        
+        // 4. Specifying tolerance at solve time
+        False_Position solver4 = new False_Position();
+        boolean success4 = solver4.solve("x^3 - x - 1", 1.0, 2.0, 0.1);
+        solver4.printSolution(success4);
     }
 }
