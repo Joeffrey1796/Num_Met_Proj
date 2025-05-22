@@ -30,6 +30,7 @@ public class Secant_Method {
         fixedFormat.setDecimalFormatSymbols(symbols);
         setTolerance(tolerance);
     }
+   
     public List<String> getSolutionSteps() {
         return msgSoln;
     }
@@ -71,7 +72,6 @@ public class Secant_Method {
     this.fixedFormat = new DecimalFormat(pattern.toString());
     this.fixedFormat.setDecimalFormatSymbols(symbols);
 }
-
 
     private String formatNumber(double value) {
         return decimalFormat.format(value);

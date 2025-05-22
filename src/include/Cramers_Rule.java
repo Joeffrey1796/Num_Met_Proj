@@ -71,22 +71,6 @@ public class Cramers_Rule {
         return decimalFormat.format(value);
     }
 
-    private double[][] minor(double[][] matrix, int row, int col) {
-        int n = matrix.length;
-        double[][] minor = new double[n - 1][n - 1];
-        int r = 0;
-        for (int i = 0; i < n; i++) {
-            if (i == row) continue;
-            int c = 0;
-            for (int j = 0; j < n; j++) {
-                if (j == col) continue;
-                minor[r][c++] = matrix[i][j];
-            }
-            r++;
-        }
-        return minor;
-    }
-
     private LinkedList<LinkedList<Double>> convertToLinkedList(double[][] matrix) {
         LinkedList<LinkedList<Double>> list = new LinkedList<>();
         for (double[] row : matrix) {
