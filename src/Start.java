@@ -370,7 +370,7 @@ class MethodsSolutionFrame extends JFrame {
         
         List<String> soln = new ArrayList<>();
         List<String> ans = new ArrayList<>();
-        String solutionText;
+        // String solutionText;
         
         switch (methodName) {
             case "Fixed-Point Iteration Method":
@@ -381,22 +381,36 @@ class MethodsSolutionFrame extends JFrame {
                 // smSolver.printSolution(smSuccess);
                 soln = fpSolver.getSolutionSteps();
                 ans = fpSolver.getAnswers();
-                soln.addAll(ans);
+                for (String string: soln){
+                    solutionTextArea.append(string + "\n");
+                }
+
+                for (String string: ans){
+                    solutionTextArea.append(string + "\n");
+                }
+                // soln.addAll(ans);
                 
-                // Join the solution steps with newlines and display in the text area
-                solutionText = String.join("\n", soln);
-                solutionTextArea.setText(solutionText);
+                // // Join the solution steps with newlines and display in the text area
+                // solutionText = String.join("\n", soln);
+                // solutionTextArea.setText(solutionText);
                 break;
             case "Newton-Rhapson Method":
                 Newton_Raphson nr_solver = new Newton_Raphson();
                 nr_solver.solve(inputs.get(0), Double.parseDouble(inputs.get(1)), Double.parseDouble(inputs.get(2)));
                 soln = nr_solver.getSolutionSteps();
                 ans = nr_solver.getAnswers();
-                soln.addAll(ans);
+                for (String string: soln){
+                    solutionTextArea.append(string + "\n");
+                }
+
+                for (String string: ans){
+                    solutionTextArea.append(string + "\n");
+                }
+                // soln.addAll(ans);
                 
-                // Join the solution steps with newlines and display in the text area
-                solutionText = String.join("\n", soln);
-                solutionTextArea.setText(solutionText);
+                // // Join the solution steps with newlines and display in the text area
+                // solutionText = String.join("\n", soln);
+                // solutionTextArea.setText(solutionText);
                 break;
             
             
@@ -408,33 +422,54 @@ class MethodsSolutionFrame extends JFrame {
                 // smSolver.printSolution(smSuccess);
                 soln = smSolver.getSolutionSteps();
                 ans = smSolver.getAnswers();
-                soln.addAll(ans);
+                for (String string: soln){
+                    solutionTextArea.append(string + "\n");
+                }
+
+                for (String string: ans){
+                    solutionTextArea.append(string + "\n");
+                }
+                // soln.addAll(ans);
                 
-                // Join the solution steps with newlines and display in the text area
-                solutionText = String.join("\n", soln);
-                solutionTextArea.setText(solutionText);
+                // // Join the solution steps with newlines and display in the text area
+                // solutionText = String.join("\n", soln);
+                // solutionTextArea.setText(solutionText);
                 break;
             case "Bisection Method":
                 Bisection bm_solver = new Bisection();
                 bm_solver.solve(inputs.get(0), Double.parseDouble(inputs.get(1)), Double.parseDouble(inputs.get(2)),Double.parseDouble(inputs.get(3)));
                 soln = bm_solver.getSolutionSteps();
                 ans = bm_solver.getAnswers();
-                soln.addAll(ans);
+                for (String string: soln){
+                    solutionTextArea.append(string + "\n");
+                }
+
+                for (String string: ans){
+                    solutionTextArea.append(string + "\n");
+                }
+                // soln.addAll(ans);
                 
-                // Join the solution steps with newlines and display in the text area
-                solutionText = String.join("\n", soln);
-                solutionTextArea.setText(solutionText);
+                // // Join the solution steps with newlines and display in the text area
+                // solutionText = String.join("\n", soln);
+                // solutionTextArea.setText(solutionText);
                 break;
             case "False Position or Regular Falsi Method":
                 False_Position fp_solver = new False_Position();
                 fp_solver.solve(inputs.get(0), Double.parseDouble(inputs.get(1)), Double.parseDouble(inputs.get(2)),Double.parseDouble(inputs.get(3)));
                 soln =  new ArrayList<>(fp_solver.getSolutionSteps());
                 ans = new ArrayList<>(fp_solver.getAnswers());
-                soln.addAll(ans);
+                for (String string: soln){
+                    solutionTextArea.append(string + "\n");
+                }
+
+                for (String string: ans){
+                    solutionTextArea.append(string + "\n");
+                }
+                // soln.addAll(ans);
                 
-                // Join the solution steps with newlines and display in the text area
-                solutionText = String.join("\n", soln);
-                solutionTextArea.setText(solutionText);
+                // // Join the solution steps with newlines and display in the text area
+                // solutionText = String.join("\n", soln);
+                // solutionTextArea.setText(solutionText);
                 break;
         
             default:
@@ -532,7 +567,7 @@ class MatrixSolutionFrame extends JFrame {
         // }
         List<String> soln = new ArrayList<>();
         List<String> ans = new ArrayList<>();
-        String solutionText;
+        // String solutionText;
 
         switch (methodName) {
             case "Cramer's Rule":
@@ -540,10 +575,17 @@ class MatrixSolutionFrame extends JFrame {
                 crSolver.solve(matrix, constants);
                 soln = crSolver.getSolutionSteps();
                 ans = crSolver.getAnswers();
-                soln.addAll(ans);
+                for (String string: soln){
+                    solutionTextArea.append(string + "\n");
+                }
 
-                solutionText = String.join("\n", soln);
-                solutionTextArea.setText(solutionText);
+                for (String string: ans){
+                    solutionTextArea.append(string + "\n");
+                }
+                // soln.addAll(ans);
+
+                // solutionText = String.join("\n", soln);
+                // solutionTextArea.setText(solutionText);
                 break;
             case "Gaussian Elimination":
                 Gaussian_Elimination geSolver = new Gaussian_Elimination();
@@ -551,10 +593,18 @@ class MatrixSolutionFrame extends JFrame {
                 geSolver.solve(matrix, constants);
                 soln = geSolver.getSolutionSteps();
                 ans = geSolver.getAnswers();
-                soln.addAll(ans);
 
-                solutionText = String.join("\n", soln);
-                solutionTextArea.setText(solutionText);
+                for (String string: soln){
+                    solutionTextArea.append(string + "\n");
+                }
+
+                for (String string: ans){
+                    solutionTextArea.append(string + "\n");
+                }
+                // soln.addAll(ans);
+
+                // solutionText = String.join("\n", soln);
+                // solutionTextArea.setText(solutionText);
                 break;
             case "Jacobi Method":
                 Jacobi jSolver = new Jacobi();
@@ -562,10 +612,17 @@ class MatrixSolutionFrame extends JFrame {
                 jSolver.solve(matrix, constants);
                 soln = jSolver.getSolutionSteps();
                 ans = jSolver.getAnswers();
-                soln.addAll(ans);
+                for (String string: soln){
+                    solutionTextArea.append(string + "\n");
+                }
 
-                solutionText = String.join("\n", soln);
-                solutionTextArea.setText(solutionText);
+                for (String string: ans){
+                    solutionTextArea.append(string + "\n");
+                }
+                // soln.addAll(ans);
+
+                // solutionText = String.join("\n", soln);
+                // solutionTextArea.setText(solutionText);
                 break;
             case "Gauss-Seidel Method":
                 Gauss_Seidel gsSolver = new Gauss_Seidel();
@@ -573,10 +630,17 @@ class MatrixSolutionFrame extends JFrame {
                 gsSolver.solve(matrix, constants);
                 soln = gsSolver.getSolutionSteps();
                 ans = gsSolver.getAnswers();
-                soln.addAll(ans);
+                for (String string: soln){
+                    solutionTextArea.append(string + "\n");
+                }
 
-                solutionText = String.join("\n", soln);
-                solutionTextArea.setText(solutionText);
+                for (String string: ans){
+                    solutionTextArea.append(string + "\n");
+                }
+                // soln.addAll(ans);
+
+                // solutionText = String.join("\n", soln);
+                // solutionTextArea.setText(solutionText);
                 break;
         
             default:
