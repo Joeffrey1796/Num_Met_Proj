@@ -319,8 +319,8 @@ class MethodsSolutionFrame extends JFrame {
         scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(32); // or any higher value like 32
-        scrollPane.getHorizontalScrollBar().setUnitIncrement(32);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(64); // or any higher value like 32
+        scrollPane.getHorizontalScrollBar().setUnitIncrement(64);
         scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
         scrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 0));
 
@@ -796,8 +796,12 @@ class MatrixInputFrame extends JFrame {
         constantsPanel.setBackground(new Color(25, 25, 25));
         JScrollPane matrixScroll = new JScrollPane(matrixPanel);
         matrixScroll.setPreferredSize(new Dimension(350, 250));
+        matrixScroll.getHorizontalScrollBar().setUnitIncrement(32);
+        matrixScroll.getVerticalScrollBar().setUnitIncrement(32);
         centerPanel.add(matrixScroll, BorderLayout.CENTER);
         JScrollPane constantsScroll = new JScrollPane(constantsPanel);
+        constantsScroll.getVerticalScrollBar().setUnitIncrement(32);
+        constantsScroll.getHorizontalScrollBar().setUnitIncrement(32);
         constantsScroll.setPreferredSize(new Dimension(120, 250));
         centerPanel.add(constantsScroll, BorderLayout.EAST);
         add(centerPanel, BorderLayout.CENTER);
