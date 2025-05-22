@@ -551,7 +551,7 @@ class MatrixSolutionFrame extends JFrame {
                 geSolver.solve(matrix, constants);
                 soln = geSolver.getSolutionSteps();
                 ans = geSolver.getAnswers();
-                // soln.addAll(ans);
+                soln.addAll(ans);
 
                 solutionText = String.join("\n", soln);
                 solutionTextArea.setText(solutionText);
@@ -620,10 +620,22 @@ class MatrixInputFrame extends JFrame {
     }
 
     private void styleMatrixField(JTextField tf, int row, int col) {
+        styleMatrixField(tf, row, col, false); // Default version without debug numbers
+    }
+
+    private void styleMatrixField(JTextField tf, int row, int col, boolean debugMode) {
         tf.setForeground(new Color(144, 238, 144));
         tf.setBackground(new Color(40, 40, 40));
         tf.setCaretColor(Color.WHITE);
         tf.setFont(new Font(Start.FONT_NAME, Font.PLAIN, 24));
+        
+        if (debugMode) {
+            tf.setText(String.valueOf(getRandomMatrixValue()));
+            tf.setForeground(Color.WHITE);
+        } else {
+            tf.setText("A[" + (row + 1) + "," + (col + 1) + "]");
+        }
+        
         tf.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusGained(java.awt.event.FocusEvent e) {
@@ -643,11 +655,28 @@ class MatrixInputFrame extends JFrame {
         });
     }
 
+    // Helper method to generate random matrix values for debugging
+    private int getRandomMatrixValue() {
+        return (int) (Math.random() * 100) + 1; // Returns random number between 1-100
+    }
+
     private void styleConstantField(JTextField tf, int row) {
+        styleConstantField(tf, row, false); // Default version without debug numbers
+    }
+
+    private void styleConstantField(JTextField tf, int row, boolean debugMode) {
         tf.setForeground(new Color(144, 238, 144));
         tf.setBackground(new Color(40, 40, 40));
         tf.setCaretColor(Color.WHITE);
-        tf.setFont(new Font(Start.FONT_NAME, Font.PLAIN,24));
+        tf.setFont(new Font(Start.FONT_NAME, Font.PLAIN, 24));
+        
+        if (debugMode) {
+            tf.setText(String.valueOf(getRandomMatrixValue()));
+            tf.setForeground(Color.WHITE);
+        } else {
+            tf.setText("B[" + (row + 1) + "]");
+        }
+        
         tf.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusGained(java.awt.event.FocusEvent e) {
@@ -690,7 +719,7 @@ class MatrixInputFrame extends JFrame {
         JLabel sizeLabel = new JLabel("Matrix size (n x n):");
         sizeLabel.setForeground(Color.GREEN);
         controlPanel.add(sizeLabel);
-        JSpinner sizeSpinner = new JSpinner(new SpinnerNumberModel(2, 1, 100, 1));
+        JSpinner sizeSpinner = new JSpinner(new SpinnerNumberModel(2, 1, 50, 1));
         controlPanel.add(sizeSpinner);
         JButton generateBtn = new JButton("Generate");
         generateBtn.setBackground(new Color(60, 80, 60));
@@ -722,7 +751,9 @@ class MatrixInputFrame extends JFrame {
                 for (int col = 0; col < n; col++) {
                     gbc.gridx = col; gbc.gridy = row;
                     JTextField tf = new JTextField("A[" + (row + 1) + "," + (col + 1) + "]");
-                    styleMatrixField(tf, row, col); // You can put your existing styling and focus code here
+
+                    //todo: Debug mode
+                    styleMatrixField(tf, row, col, true); // You can put your existing styling and focus code here
                     matrixFields[row][col] = tf;
                     matrixPanel.add(tf, gbc);
                 }
@@ -730,7 +761,9 @@ class MatrixInputFrame extends JFrame {
                 gbc.gridx = 0;
                 gbc.gridy = row;
                 JTextField tf = new JTextField("B[" + (row + 1) + "]");
-                styleConstantField(tf, row); // Move your focus styling code into a method for clarity
+
+                //todo: Debug mode
+                styleConstantField(tf, row,true); // Move your focus styling code into a method for clarity
                 constantFields[row] = tf;
                 constantsPanel.add(tf, gbc);
             }
