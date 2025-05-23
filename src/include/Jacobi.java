@@ -144,6 +144,48 @@ public class Jacobi {
         return solve(coefficients, constants, this.tolerance);
     }
 
+    public void diagonallyDominant() {
+        int n = coefficients.length;
+        boolean[] used = new boolean[n];
+        double[][] newCoefficients = new double[n][n];
+        double[] newConstants = new double[n];
+
+        for (int i = 0; i < n; i++) {
+            boolean found = false;
+            for (int j = 0; j < n; j++) {
+                if (used[j]) continue;
+                double diag = Math.abs(coefficients[j][i]);
+                double sum = 0;
+                for (int k = 0; k < n; k++) {
+                    if (k != i) sum += Math.abs(coefficients[j][k]);
+                }
+                if (diag >= sum) {
+                    System.arraycopy(coefficients[j], 0, newCoefficients[i], 0, n);
+                    newConstants[i] = constants[j];
+                    used[j] = true;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                solutionSteps.add("Warning: Could not make matrix diagonally dominant. Results may not converge.");
+                return;
+            }
+        }
+        for (double[] d :newCoefficients) {
+            for (double e : d) {
+                System.out.println(e +" ");
+            }
+            System.out.println();
+        }
+
+        for (double d : newConstants) {
+            System.out.println(d);
+        }
+        this.coefficients = newCoefficients;
+        this.constants = newConstants;
+    }
+
     public double[] solve(double[][] coefficients, double[] constants, double tolerance) {
         this.coefficients = deepCopyMatrix(coefficients);
         this.constants = Arrays.copyOf(constants, constants.length);
@@ -153,12 +195,23 @@ public class Jacobi {
         setTolerance(tolerance);
 
         printSystem();
-        makeDiagonallyDominant();
+        // makeDiagonallyDominant();
+        diagonallyDominant();
 
+        // for (double[] d : this.coefficients) {
+        //     for (double e : d) {
+        //         System.out.println(e +" ");
+        //     }
+        //     System.out.println();
+        // }
+
+        // for (double d : constants) {
+        //     System.out.println(d);
+        // }
         solutionSteps.add("\nStarting Jacobi Iteration:");
         solutionSteps.add("Using tolerance: " + formatNumber(tolerance));
 
-        int n = coefficients.length;
+        int n = this.coefficients.length;
         double[] current = new double[n];
         double[] previous = new double[n];
         Arrays.fill(current, 0);
@@ -169,14 +222,14 @@ public class Jacobi {
 
             double[] next = new double[n];
             for (int i = 0; i < n; i++) {
-                double sum = constants[i];
+                double sum = this.constants[i];
                 StringBuilder formula = new StringBuilder("x" + (i + 1) + " = (" +
                         formatNumber(constants[i]) + " - (");
 
                 for (int j = 0; j < n; j++) {
                     if (j != i) {
-                        sum -= coefficients[i][j] * previous[j];
-                        formula.append(formatNumber(coefficients[i][j]))
+                        sum -= this.coefficients[i][j] * previous[j];
+                        formula.append(formatNumber(this.coefficients[i][j]))
                                 .append("*x").append(j + 1)
                                 .append(" [").append(formatNumber(previous[j])).append("]");
 
@@ -186,8 +239,8 @@ public class Jacobi {
                     }
                 }
 
-                formula.append(")) / ").append(formatNumber(coefficients[i][i]));
-                next[i] = sum / coefficients[i][i];
+                formula.append(")) / ").append(formatNumber(this.coefficients[i][i]));
+                next[i] = sum / this.coefficients[i][i];
                 formula.append(" = ").append(formatNumber(next[i]));
                 solutionSteps.add(formula.toString());
             }
